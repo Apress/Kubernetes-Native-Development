@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: curl-service-fqdn
+  labels:
+    app: curl
+spec:
+  template:
+    spec:
+      containers:
+      - image: curlimages/curl
+        command: [ "/bin/sh", "-c", "--" ]
+        args: [ "curl -s -f --connect-timeout 5 http://webserver.default.svc.cluster.local"]
+        name: curl
+      restartPolicy: Never

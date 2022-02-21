@@ -1,0 +1,24 @@
+# permissions for end users to edit localnewsapps.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: localnewsapp-editor-role
+rules:
+- apiGroups:
+  - kubdev.apress.com
+  resources:
+  - localnewsapps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kubdev.apress.com
+  resources:
+  - localnewsapps/status
+  verbs:
+  - get

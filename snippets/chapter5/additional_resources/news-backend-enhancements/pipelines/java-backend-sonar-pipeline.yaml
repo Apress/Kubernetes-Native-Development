@@ -1,0 +1,124 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: news-backend-pipe-sonar
+spec:
+  params:
+    - name: image_repo
+      type: string
+      description: The image repository to push the resulting image to
+      default: registry.kube-system/k8snativedev
+    - name: image_version
+      type: string
+      description: The image version
+      default: latest
+    - name: sonar_token
+      type: string
+      description: User token for the sonarqube server
+  workspaces:
+    - name: shared-workspace
+    - name: maven-settings
+    - name: auth
+    - name: sonar-settings
+  tasks:
+    - name: clone-sources
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: https://github.com/Javatar81/localnews
+        - name: deleteExisting
+          value: 'true'
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+        - name: basic-auth
+          workspace: auth
+    - name: deploy-test-database
+      taskRef:
+        name: helm-upgrade-from-repo
+      params:
+        - name: helm_repo
+          value: https://charts.bitnami.com/bitnami
+        - name: chart_name
+          value: bitnami/postgresql
+        - name: release_version
+          value: 10.7.1
+        - name: release_name
+          value: tekton-test-db
+        - name: overwrite_values
+          value: image.repository=postgis/postgis,image.tag=latest,containerSecurityContext.runAsUser=999,persistence.enabled=false,postgresqlDataDir=/var/lib/postgresql/data,postgresqlDatabase=news,postgresqlUsername=test,postgresqlPassword=test,replication.readReplicas=1
+      runAfter:
+        - clone-sources
+    - name: maven-build
+      taskRef:
+        name: maven
+      params:
+        - name: CONTEXT_DIR
+          value: "components/news-backend"
+        - name: GOALS
+          value:
+            - clean
+            - org.jacoco:jacoco-maven-plugin:0.8.7:prepare-agent
+            - test
+            - org.jacoco:jacoco-maven-plugin:0.8.7:report
+            - package
+            - -Dquarkus.datasource.jdbc.url=jdbc:postgresql://tekton-test-db-postgresql:5432/news?user=test&password=test
+            - -Dquarkus.datasource.devservices=false
+      runAfter:
+        - deploy-test-database
+      workspaces:
+        - name: maven-settings
+          workspace: maven-settings
+        - name: source
+          workspace: shared-workspace
+    - name: undeploy-test-database
+      taskRef:
+        name: helm-uninstall
+      params:
+        - name: release_name
+          value: tekton-test-db
+      runAfter:
+        - maven-build
+    - name: code-analysis
+      taskRef:
+        name: sonarqube-scanner
+      params:
+        - name: SONAR_HOST_URL
+          value: http://sonarqube-sonarqube.sonarqube:9000
+        - name: SONAR_PROJECT_BASE
+          value: ./components/news-backend
+        - name: SONAR_PROJECT_KEY
+          value: news-backend
+        - name: SONAR_SOURCES
+          value: src/main/java
+        - name: SONAR_BINARIES
+          value: target
+        - name: SONAR_TOKEN
+          value: $(params.sonar_token)
+      runAfter:
+        - maven-build
+      workspaces:
+        - name: source-dir
+          workspace: shared-workspace
+        - name: sonar-settings
+          workspace: sonar-settings
+    - name: build-and-push-image
+      taskRef:
+        name: buildah
+      params:
+        - name: CONTEXT
+          value: components/news-backend
+        - name: BUILDER_IMAGE
+          value: quay.io/buildah/stable:v1.21.0
+        - name: TLSVERIFY
+          value: "false"
+        - name: DOCKERFILE
+          value: "src/main/docker/Dockerfile.jvm"
+        - name: IMAGE
+          value: $(params.image_repo)/news-backend:$(params.image_version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - undeploy-test-database

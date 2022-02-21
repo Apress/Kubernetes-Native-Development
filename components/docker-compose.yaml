@@ -1,0 +1,51 @@
+version: "3"
+services:
+  news-frontend:
+        image: quay.io/k8snativedev/news-frontend
+        restart: always
+        environment:
+          - NODE_IP=localhost
+          - NODE_PORT=8080        
+        ports:
+          - 4200:80
+  news-backend:
+        image: quay.io/k8snativedev/news-backend
+        ports:
+          - '8080:8080'
+        restart: always
+        depends_on: 
+          - postgis
+        environment:
+          - quarkus.datasource.jdbc.url=jdbc:postgresql://postgis:5432/news?user=postgres&password=banane
+          - backend.nlp.url=http://location-extractor:80/get_loc
+  location-extractor:
+        image: quay.io/k8snativedev/location_extractor
+        ports:
+          - '5000:80'
+        restart: always
+  feed-scraper:
+        image: quay.io/k8snativedev/feed-scraper
+        restart: always
+        depends_on: 
+          - news-backend
+        environment:
+          - SCRAPER_FEEDS_URL=http://feeds.bbci.co.uk/news/world/rss.xml
+          - SCRAPER_FEED_BACKEND_HOST=news-backend
+        entrypoint: ["java","-jar","/usr/local/lib/feed-scraper.jar"]
+  postgis:
+        image: postgis/postgis:12-master
+        ports:
+          - 5432:5432
+        environment:
+          - PGDATA=/tmp/pgdata
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=banane
+          - POSTGRES_DB=news
+#         networks:
+#           - postgis
+# networks:
+#   postgis:
+#     driver: bridge
+
+
+

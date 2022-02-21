@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: feed-scraper-job
+spec:
+  template:
+    spec:
+      containers:
+        - command:
+            - java
+            - -jar
+            - /usr/local/lib/feed-scraper.jar
+          image: quay.io/k8snativedev/feed-scraper:job
+          name: feed-scraper
+          env:
+            - name: SCRAPER_FEEDS_URL
+              value: http://rss.cnn.com/rss/edition_world.rss
+            - name: SCRAPER_FEED_BACKEND_HOST
+              value: news-backend
+          imagePullPolicy: Always
+      restartPolicy: Never
+  backoffLimit: 10

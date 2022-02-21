@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mynewsapp-crd
+  namespace: argocd
+spec:
+  destination:
+    namespace: localnews-gitops-operators
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: k8s/operator/gitops/crd
+    repoURL: git@github.com:Javatar81/localnews.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,17 @@
+{{ if eq .Values.newsfrontend.service "on" }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.newsfrontend.name }}
+  name: {{ .Values.newsfrontend.name }}
+spec:
+  ports:
+    - port: {{ .Values.newsfrontend.ports.servicePort }}
+      targetPort: {{ .Values.newsfrontend.ports.containerPort }}
+      nodePort: {{ .Values.newsfrontend.ports.nodePort }}
+  selector:
+    app: {{ .Values.newsfrontend.name }}
+  type: NodePort
+{{ end }}
+

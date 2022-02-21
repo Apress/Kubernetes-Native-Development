@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgis
+  name: postgis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgis
+  template:
+    metadata:
+      labels:
+        app: postgis
+    spec:
+      containers:
+        - env:
+            - name: PGDATA
+              value: /tmp/pgdata
+            - name: POSTGRES_DB
+              value: news
+            - name: POSTGRES_PASSWORD
+              value: banane
+            - name: POSTGRES_USER
+              value: postgres
+          image: postgis/postgis
+          name: postgis
+          ports:
+            - containerPort: 5432

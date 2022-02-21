@@ -1,0 +1,15 @@
+apiVersion: kubdev.apress.com/v1alpha1
+kind: LocalNewsApp
+metadata:
+  name: mynewsapp
+spec:
+  feedscraper:
+    envVars:
+      feeds:
+        value: http://rss.cnn.com/rss/edition_world.rss
+  newsfrontend:
+    backendConnection: "viaIngress"
+  localnews:
+    ## replace this with your minikube ip, you can get it by running "minikube ip" ob the cli
+    minikubeIp: "192.168.39.171"
+

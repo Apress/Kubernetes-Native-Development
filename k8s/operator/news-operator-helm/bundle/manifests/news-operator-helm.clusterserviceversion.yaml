@@ -1,0 +1,412 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: |-
+      [
+        {
+          "apiVersion": "kubdev.apress.com/v1alpha1",
+          "kind": "FeedAnalysis",
+          "metadata": {
+            "name": "feedanalysis-sample"
+          },
+          "spec": {
+            "affinity": {},
+            "autoscaling": {
+              "enabled": false,
+              "maxReplicas": 100,
+              "minReplicas": 1,
+              "targetCPUUtilizationPercentage": 80
+            },
+            "fullnameOverride": "",
+            "image": {
+              "pullPolicy": "IfNotPresent",
+              "repository": "nginx",
+              "tag": ""
+            },
+            "imagePullSecrets": [],
+            "ingress": {
+              "annotations": {},
+              "className": "",
+              "enabled": false,
+              "hosts": [
+                {
+                  "host": "chart-example.local",
+                  "paths": [
+                    {
+                      "path": "/",
+                      "pathType": "ImplementationSpecific"
+                    }
+                  ]
+                }
+              ],
+              "tls": []
+            },
+            "nameOverride": "",
+            "nodeSelector": {},
+            "podAnnotations": {},
+            "podSecurityContext": {},
+            "replicaCount": 1,
+            "resources": {},
+            "securityContext": {},
+            "service": {
+              "port": 80,
+              "type": "ClusterIP"
+            },
+            "serviceAccount": {
+              "annotations": {},
+              "create": true,
+              "name": ""
+            },
+            "tolerations": []
+          }
+        },
+        {
+          "apiVersion": "kubdev.apress.com/v1alpha1",
+          "kind": "LocalNewsApp",
+          "metadata": {
+            "name": "localnewsapp-sample"
+          },
+          "spec": {
+            "feedscraper": {
+              "deployment": "on",
+              "envVars": {
+                "backend": {
+                  "key": "SCRAPER_FEED_BACKEND_HOST",
+                  "value": "news-backend"
+                },
+                "feeds": {
+                  "key": "SCRAPER_FEEDS_URL",
+                  "value": "http://feeds.bbci.co.uk/news/world/rss.xml"
+                }
+              },
+              "image": "quay.io/k8snativedev/feed-scraper",
+              "imageTag": "latest",
+              "name": "feed-scraper",
+              "replicaCount": 1
+            },
+            "localnews": {
+              "domain": "nip.io",
+              "imagePullPolicy": "Always",
+              "minikubeIp": "fill-in-minikube-ip"
+            },
+            "locationextractor": {
+              "deployment": "on",
+              "image": "quay.io/k8snativedev/location_extractor",
+              "imageTag": "latest",
+              "name": "location-extractor",
+              "ports": {
+                "containerPort": 80,
+                "servicePort": 8081
+              },
+              "replicaCount": 1,
+              "service": "on"
+            },
+            "newsbackend": {
+              "deployment": "on",
+              "envVars": {
+                "backendNlpUrl": {
+                  "key": "backend.nlp.url",
+                  "valueEndpoint": "/get_loc",
+                  "valueHost": "http://location-extractor"
+                },
+                "jdbcUrl": {
+                  "key": "quarkus.datasource.jdbc.url",
+                  "value": "jdbc:postgresql://postgis:5400/news?user=postgres\u0026password=banane"
+                }
+              },
+              "image": "quay.io/k8snativedev/news-backend",
+              "imageTag": "latest",
+              "name": "news-backend",
+              "ports": {
+                "containerPort": 8080,
+                "nodePort": 30000,
+                "servicePort": 8080
+              },
+              "replicaCount": 1,
+              "service": "on"
+            },
+            "newsfrontend": {
+              "backendConnection": "viaNodePort",
+              "deployment": "on",
+              "envVars": {
+                "backend": {
+                  "ip": {
+                    "key": "NODE_IP",
+                    "value": null
+                  },
+                  "nodePort": {
+                    "key": "NODE_PORT",
+                    "value": null
+                  }
+                }
+              },
+              "image": "quay.io/k8snativedev/news-frontend",
+              "imageTag": "latest",
+              "name": "news-frontend",
+              "ports": {
+                "containerPort": 80,
+                "nodePort": 31111,
+                "servicePort": 80
+              },
+              "replicaCount": 1,
+              "service": "on"
+            },
+            "postgis": {
+              "envVars": {
+                "PGDATA": {
+                  "key": "PGDATA",
+                  "value": "/tmp/pgdata"
+                },
+                "POSTGRES_DB": {
+                  "key": "POSTGRES_DB",
+                  "value": "news"
+                },
+                "POSTGRES_PASSWORD": {
+                  "key": "POSTGRES_PASSWORD",
+                  "value": "banane"
+                },
+                "POSTGRES_USER": {
+                  "key": "POSTGRES_USER",
+                  "value": "postgres"
+                }
+              },
+              "image": "postgis/postgis:12-master",
+              "name": "postgis",
+              "ports": {
+                "containerPort": 5432,
+                "servicePort": 5400
+              },
+              "replicaCount": 1
+            }
+          }
+        }
+      ]
+    capabilities: Basic Install
+    operators.operatorframework.io/builder: operator-sdk-v1.15.0
+    operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
+  name: news-operator-helm.v0.0.1
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - kind: FeedAnalysis
+      name: feedanalysis.kubdev.apress.com
+      version: v1alpha1
+    - kind: LocalNewsApp
+      name: localnewsapps.kubdev.apress.com
+      version: v1alpha1
+  description: This is an operator to manage Local News applications
+  displayName: Local News Operator
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - namespaces
+          verbs:
+          - get
+        - apiGroups:
+          - ""
+          resources:
+          - secrets
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+        - apiGroups:
+          - kubdev.apress.com
+          resources:
+          - localnewsapps
+          - localnewsapps/status
+          - localnewsapps/finalizers
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - services
+          verbs:
+          - '*'
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          verbs:
+          - '*'
+        - apiGroups:
+          - networking.k8s.io
+          resources:
+          - ingresses
+          verbs:
+          - '*'
+        - apiGroups:
+          - kubdev.apress.com
+          resources:
+          - feedanalysis
+          - feedanalysis/status
+          - feedanalysis/finalizers
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - serviceaccounts
+          - services
+          verbs:
+          - '*'
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          verbs:
+          - '*'
+        - apiGroups:
+          - authentication.k8s.io
+          resources:
+          - tokenreviews
+          verbs:
+          - create
+        - apiGroups:
+          - authorization.k8s.io
+          resources:
+          - subjectaccessreviews
+          verbs:
+          - create
+        serviceAccountName: news-operator-helm-controller-manager
+      deployments:
+      - name: news-operator-helm-controller-manager
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              control-plane: controller-manager
+          strategy: {}
+          template:
+            metadata:
+              labels:
+                control-plane: controller-manager
+            spec:
+              containers:
+              - args:
+                - --secure-listen-address=0.0.0.0:8443
+                - --upstream=http://127.0.0.1:8080/
+                - --logtostderr=true
+                - --v=10
+                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+                name: kube-rbac-proxy
+                ports:
+                - containerPort: 8443
+                  name: https
+                  protocol: TCP
+                resources: {}
+              - args:
+                - --health-probe-bind-address=:8081
+                - --metrics-bind-address=127.0.0.1:8080
+                - --leader-elect
+                - --leader-election-id=news-operator-helm
+                image: quay.io/k8snativedev/news-operator:0.0.1
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 8081
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
+                name: manager
+                readinessProbe:
+                  httpGet:
+                    path: /readyz
+                    port: 8081
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                resources:
+                  limits:
+                    cpu: 200m
+                    memory: 100Mi
+                  requests:
+                    cpu: 100m
+                    memory: 60Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+              securityContext:
+                runAsNonRoot: true
+              serviceAccountName: news-operator-helm-controller-manager
+              terminationGracePeriodSeconds: 10
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - coordination.k8s.io
+          resources:
+          - leases
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: news-operator-helm-controller-manager
+    strategy: deployment
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - news
+  - nlp
+  - rss
+  links:
+  - name: News Operator Helm
+    url: https://news-operator-helm.domain
+  maturity: alpha
+  provider:
+    name: apress.com
+    url: apress.com
+  version: 0.0.1

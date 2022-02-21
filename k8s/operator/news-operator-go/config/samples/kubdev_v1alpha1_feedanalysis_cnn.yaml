@@ -1,0 +1,9 @@
+apiVersion: kubdev.apress.com/v1alpha1
+kind: FeedAnalysis
+metadata:
+  name: feedanalysis-cnn
+spec:
+  feedscraper:
+    feedsUrl: 
+    - "http://rss.cnn.com/rss/edition_world.rss"
+

@@ -1,0 +1,28 @@
+{{ if eq .Values.feedscraper.deployment "on" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "feedanalysis.fullname" . }}
+spec:
+  replicas: {{ .Values.feedscraper.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "feedanalysis.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "feedanalysis.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - command:
+            - java
+            - -jar
+            - /usr/local/lib/feed-scraper.jar
+          image: {{ .Values.feedscraper.image }}:{{ .Values.feedscraper.imageTag }}
+          name: {{ .Chart.Name }}
+          env:
+            - name: {{ .Values.feedscraper.envVars.feeds.key }}
+              value: {{ .Values.feedscraper.envVars.feeds.value }}
+            - name: {{ .Values.feedscraper.envVars.backend.key }}
+              value: {{ .Values.feedscraper.envVars.backend.value }}
+{{ end }}

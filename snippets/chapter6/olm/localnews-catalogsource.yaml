@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: localnews-catalog
+  namespace: operators
+spec:
+  sourceType: grpc
+  image: quay.io/k8snativedev/news-operator-catalog:0.0.1
+  displayName: Localnews Operator Catalog
+  publisher: apress.com
+  updateStrategy:
+    registryPoll: 
+      interval: 30m

@@ -1,0 +1,92 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: feed-scraper-job-build-pipe
+spec:
+  params:
+    - name: component
+      type: string
+      description: The name of the component to build
+      default: feed-scraper
+    - name: component-sub
+      type: string
+      description: The name of the sub-component to build
+      default: pure
+    - name: dockerfile
+      type: string
+      description: The name of the dockerfile to build
+      default: ./Dockerfile.build-single
+    - name: image_repo
+      type: string
+      description: The image repository to push the resulting image to
+      default: quay.io/k8snativedev
+    - name: image_version
+      type: string
+      description: The image version
+      default: latest
+    - name: gitrevision
+      description: The git revision
+      default: main
+    - name: gitrepositoryurl
+      description: The git repository url
+      default: git@github.com:Apress/Kubernetes-Native-Development.git
+  workspaces:
+    - name: shared-workspace
+    - name: maven-settings
+  tasks:
+    - name: clone-sources
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.gitrepositoryurl)
+        - name: revision 
+          value: $(params.gitrevision)
+        - name: deleteExisting
+          value: 'true'
+        - name: submodules
+          value: "false"
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    - name: maven-build
+      taskRef:
+        name: maven
+      params:
+        - name: CONTEXT_DIR
+          value: "components/$(params.component)-$(params.component-sub)"
+        - name: GOALS
+          value:
+            - clean
+            - org.jacoco:jacoco-maven-plugin:0.8.7:prepare-agent
+            - test
+            - org.jacoco:jacoco-maven-plugin:0.8.7:report
+            - package
+      runAfter:
+        - clone-sources
+      workspaces:
+        - name: maven-settings
+          workspace: maven-settings
+        - name: source
+          workspace: shared-workspace
+    - name: build-and-push-image
+      taskRef:
+        name: buildah
+      params:
+        - name: CONTEXT
+          value: components/$(params.component)-$(params.component-sub)
+        - name: BUILDER_IMAGE
+          value: quay.io/buildah/stable:v1.21.0
+        - name: DOCKERFILE
+          value: $(params.dockerfile)
+        - name: PUSH_EXTRA_ARGS
+          value: --log-level warn
+        - name: TLSVERIFY
+          value: "true"
+        - name: IMAGE
+          value: $(params.image_repo)/$(params.component):$(params.image_version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - maven-build

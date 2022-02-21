@@ -1,0 +1,9 @@
+FROM docker.io/nginx:1.21.1
+
+LABEL maintainer="Max Dargatz"
+
+COPY dist/news-frontend/ /usr/share/nginx/html/
+
+EXPOSE 80
+
+CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/html/assets/settings.template.json > /usr/share/nginx/html/assets/settings.json && exec nginx -g 'daemon off;'"]

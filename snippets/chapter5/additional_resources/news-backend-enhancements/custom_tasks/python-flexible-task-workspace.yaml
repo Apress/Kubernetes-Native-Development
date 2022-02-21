@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: flexible-ws-python
+spec:
+  params:
+    - name: ARGS
+      description: Extra parameters passed to python.
+      type: array
+    - name: COMMAND
+      description: Command to execute.
+      type: string
+      default: "python"
+  workspaces:
+    - name: source
+  steps:
+    - name: run
+      image: docker.io/python:3.8
+      workingDir: $(workspaces.source.path)
+      command:
+        - $(params.COMMAND)
+      args:
+        - $(params.ARGS) 

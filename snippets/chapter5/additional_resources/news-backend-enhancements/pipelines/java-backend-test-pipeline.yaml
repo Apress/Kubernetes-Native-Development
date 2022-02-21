@@ -1,0 +1,68 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: news-backend-pipe-test
+spec:
+  params:
+    - name: image_repo
+      type: string
+      description: The image repository to push the resulting image to
+      default: registry.kube-system/k8snativedev
+    - name: image_version
+      type: string
+      description: The image version
+      default: latest
+  workspaces:
+    - name: shared-workspace
+    - name: maven-settings
+    - name: auth
+  tasks:
+    - name: clone-sources
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: https://github.com/Javatar81/localnews
+        - name: deleteExisting
+          value: 'true'
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+        - name: basic-auth
+          workspace: auth
+    - name: maven-build
+      taskRef:
+        name: maven
+      params:
+        - name: CONTEXT_DIR
+          value: "components/news-backend"
+        - name: GOALS
+          value:
+            - clean
+            - package
+      runAfter:
+        - clone-sources
+      workspaces:
+        - name: maven-settings
+          workspace: maven-settings
+        - name: source
+          workspace: shared-workspace
+    - name: build-and-push-image
+      taskRef:
+        name: buildah
+      params:
+        - name: CONTEXT
+          value: components/news-backend
+        - name: BUILDER_IMAGE
+          value: quay.io/buildah/stable:v1.21.0
+        - name: TLSVERIFY
+          value: "false"
+        - name: DOCKERFILE
+          value: "src/main/docker/Dockerfile.jvm"
+        - name: IMAGE
+          value: $(params.image_repo)/news-backend:$(params.image_version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - maven-build

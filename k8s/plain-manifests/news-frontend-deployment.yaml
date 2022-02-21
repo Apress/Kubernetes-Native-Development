@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: news-frontend
+  name: news-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: news-frontend
+  template:
+    metadata:
+      labels:
+        app: news-frontend
+    spec:
+      containers:
+        - image: quay.io/k8snativedev/news-frontend
+          name: news-frontend
+          ports:
+            - containerPort: 80
+          env:
+            - name: NODE_PORT
+              value: "30000"
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          

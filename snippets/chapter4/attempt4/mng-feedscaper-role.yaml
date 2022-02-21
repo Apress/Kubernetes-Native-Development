@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mng-feedscaper-role
+rules:
+- apiGroups: ["batch"] # "" indicates the core API group
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  
+- apiGroups: ["kubdev.apress.com"]
+  resources: ["feedanalyses"]
+  verbs: ["get", "list", "watch"] 
+  
+  

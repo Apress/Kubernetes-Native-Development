@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feed-scraper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feed-scraper
+  template:
+    metadata:
+      labels:
+        app: feed-scraper
+    spec:
+      containers:
+      - image: quay.io/k8snativedev/feed-scraper
+        name: feed-scraper
+        env:
+        - name: SCRAPER_FEEDS_URL
+          value: http://rss.cnn.com/rss/edition_world.rss
+        - name: SCRAPER_FEED_BACKEND_HOST
+          value: news-backend 
+  
+          

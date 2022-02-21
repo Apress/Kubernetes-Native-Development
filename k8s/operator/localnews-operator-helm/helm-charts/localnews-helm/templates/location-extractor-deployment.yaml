@@ -1,0 +1,24 @@
+{{ if eq .Values.locationextractor.deployment "on" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.locationextractor.name }}
+  name: {{ .Values.locationextractor.name }}
+spec:
+  replicas: {{ .Values.locationextractor.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.locationextractor.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.locationextractor.name }}
+    spec:
+      containers:
+        - image: {{ .Values.locationextractor.image }}:{{ .Values.locationextractor.imageTag }}
+          name: {{ .Values.locationextractor.name }}
+          imagePullPolicy: {{ .Values.localnews.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.locationextractor.ports.containerPort }}
+{{ end }}

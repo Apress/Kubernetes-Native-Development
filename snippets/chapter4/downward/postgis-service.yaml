@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: postgis
+  name: postgis
+spec:
+  ports:
+    - port: 5400
+      targetPort: 5432
+  selector:
+    app: postgis

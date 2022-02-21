@@ -1,0 +1,7 @@
+apiVersion: kubdev.apress.com/v1alpha1
+kind: LocalNewsApp
+metadata:
+  name: mynewsapp
+spec:
+  feedscraper:
+    deployment: "off"

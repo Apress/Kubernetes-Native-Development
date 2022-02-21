@@ -1,0 +1,18 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone-simple
+spec:
+  steps:
+    - name: git-version
+      image: docker.io/alpine/git
+      command:
+        - git
+        - version
+    - name: clone-repo
+      image: docker.io/alpine/git
+      command:
+        - git
+        - clone
+      args:
+        - "https://github.com/alpine-docker/git.git" 

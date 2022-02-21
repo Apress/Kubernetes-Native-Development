@@ -1,0 +1,17 @@
+apiVersion: kubdev.apress.com/v1alpha1
+kind: LocalNewsApp
+metadata:
+  name: localnewsapp-sample-noscrape
+spec:
+  # Add fields here
+  localnews:
+    minikubeIp: "fill-in-minikube-ip"
+  newsfrontend:
+    deployment: "on"
+    backendConnection: "viaIngress"
+  newsbackend:
+    deployment: "on"
+  locationextractor:
+    deployment: "on"
+  feedscraper:
+    deployment: "off"

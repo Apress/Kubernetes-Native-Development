@@ -1,0 +1,3 @@
+FROM docker.io/openjdk:11-jre-slim
+COPY target/feed-scraper-jar-with-dependencies.jar /usr/local/lib/feed-scraper.jar
+ENTRYPOINT ["java","-jar","/usr/local/lib/feed-scraper.jar"]

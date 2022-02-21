@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone-simple-param
+spec:
+  params:
+    - name: gitrepositoryurl
+      description: The git repo to clone
+      type: string
+      default: https://github.com/nginx/nginx.git
+  steps:
+    - name: git-version
+      image: docker.io/alpine/git
+      command:
+        - git
+        - version
+    - name: clone-repo
+      image: docker.io/alpine/git
+      command:
+        - git
+        - clone
+      args:
+        - $(params.gitrepositoryurl) 

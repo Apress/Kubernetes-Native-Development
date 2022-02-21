@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: localnews
+  annotations:
+  namespace: argocd
+spec:
+  source:
+    path: k8s/helm-chart
+    repoURL: git@github.com:Javatar81/localnews.git
+    targetRevision: main
+  destination:
+    namespace: newsbackend-integration-gitops
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  project: default

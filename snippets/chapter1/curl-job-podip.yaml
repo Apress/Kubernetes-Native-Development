@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: curl
+  labels:
+    app: curl
+spec:
+  template:
+    spec:
+      containers:
+      - image: curlimages/curl
+        command: [ "/bin/sh", "-c", "--" ]
+        args: [ "curl -s -f --connect-timeout 5 http://172.17.0.7"]
+        name: curl
+      restartPolicy: Never

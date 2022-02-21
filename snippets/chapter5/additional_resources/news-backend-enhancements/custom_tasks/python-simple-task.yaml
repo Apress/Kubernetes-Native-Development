@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: simple-python
+spec:
+  steps:
+    - name: run
+      image: docker.io/python:3.8
+      command:
+        - python
+      args:
+        - -V

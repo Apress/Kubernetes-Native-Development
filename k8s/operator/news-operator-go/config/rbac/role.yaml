@@ -1,0 +1,60 @@
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - kubdev.apress.com
+  resources:
+  - feedanalysis
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kubdev.apress.com
+  resources:
+  - feedanalysis/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - kubdev.apress.com
+  resources:
+  - feedanalysis/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - kubdev.apress.com
+  resources:
+  - localnewsapps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kubdev.apress.com
+  resources:
+  - localnewsapps/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - kubdev.apress.com
+  resources:
+  - localnewsapps/status
+  verbs:
+  - get
+  - patch
+  - update

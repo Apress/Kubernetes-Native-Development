@@ -1,0 +1,111 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: news-backend-simple-pipe
+spec:
+  params:
+    - name: component
+      type: string
+      description: The name of the component to build
+      default: news-backend
+    - name: gitrevision
+      description: The git revision
+      default: main
+    - name: gitrepositoryurl
+      description: The git repository url
+      default: git@github.com:Apress/Kubernetes-Native-Development.git
+    - name: dockerfile
+      type: string
+      description: The name of the dockerfile to build
+      default: ./src/main/docker/Dockerfile.jvm
+    - name: image_repo
+      type: string
+      description: The image repository to push the resulting image to
+      default: quay.io/k8snativedev
+    - name: image_version
+      type: string
+      description: The image version
+      default: latest
+    - name: helm_release_version
+      type: string
+      description: The helm tag
+      default: latest
+    - name: target_namespace
+      type: string
+      description: The namespace to deploy in
+      default: newsbackend-integration
+  workspaces:
+    - name: shared-workspace
+    - name: maven-settings
+  tasks:
+    - name: clone-sources
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.gitrepositoryurl)
+        - name: revision 
+          value: $(params.gitrevision)
+        - name: deleteExisting
+          value: 'true'
+        - name: submodules
+          value: "false"
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    - name: maven-build
+      taskRef:
+        name: maven
+      params:
+        - name: CONTEXT_DIR
+          value: "components/$(params.component)"
+        - name: GOALS
+          value:
+          - clean
+          - package
+          - -DskipTests=true
+      runAfter:
+        - clone-sources
+      workspaces:
+        - name: maven-settings
+          workspace: maven-settings
+        - name: source
+          workspace: shared-workspace
+    - name: build-and-push-image
+      taskRef:
+        name: buildah
+      params:
+        - name: CONTEXT
+          value: components/$(params.component)
+        - name: BUILDER_IMAGE
+          value: quay.io/buildah/stable:v1.21.0
+        - name: TLSVERIFY
+          value: "true"
+        - name: DOCKERFILE
+          value: "$(params.dockerfile)"
+        - name: IMAGE
+          value: $(params.image_repo)/$(params.component):$(params.image_version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - maven-build
+    - name: helm-upgrade
+      taskRef:
+        name: helm-upgrade-from-source
+      params:
+        - name: charts_dir
+          value: "k8s/helm-chart"
+        - name: release_version
+          value: $(params.helm_release_version)
+        - name: release_name
+          value: "localnews"
+        - name: overwrite_values
+          value: "newsbackend.imageTag=$(params.image_version),newsbackend.image=$(params.image_repo)/$(params.component)"
+        - name: release_namespace
+          value: $(params.target_namespace)
+      workspaces:
+      - name: source
+        workspace: shared-workspace
+      runAfter:
+        - build-and-push-image

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: clone-and-build-bot
+secrets:
+  - name: k8snativedev-tekton-pull-secret
+  - name: ssh-key
+
+## example to test permissions:
+## "kubectl auth can-i list secrets --as=system:serviceaccount:default:build-bot -n default"

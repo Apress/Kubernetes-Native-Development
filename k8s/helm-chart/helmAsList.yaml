@@ -1,0 +1,193 @@
+kind: List
+apiVersion: v1
+metadata:
+  name: app=localnews
+items:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: location-extractor
+      name: location-extractor
+      namespace: admin-che
+    spec:
+      ports:
+        - port: 8081
+          targetPort: 80
+      selector:
+        app: location-extractor
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: news-backend
+      name: news-backend
+      namespace: admin-che
+    spec:
+      type: NodePort
+      ports:
+        - port: 8080
+          targetPort: 8080
+          nodePort: 30000
+      selector:
+        app: news-backend
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: news-frontend
+      name: news-frontend
+      namespace: admin-che
+    spec:
+      ports:
+        - port: 80
+          targetPort: 80
+          nodePort: 31111
+      selector:
+        app: news-frontend
+      type: NodePort
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: postgis
+      name: postgis
+      namespace: admin-che
+    spec:
+      ports:
+        - port: 5400
+          targetPort: 5432
+      selector:
+        app: postgis
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: feed-scraper
+      namespace: admin-che
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: feed-scraper
+      template:
+        metadata:
+          labels:
+            app: feed-scraper
+        spec:
+          containers:
+            - command:
+                - java
+                - -Dscraper.feeds.url=http://feeds.bbci.co.uk/news/world/rss.xml
+                - -Dscraper.feed.backend.host=news-backend
+                - -jar
+                - /usr/local/lib/feed-scraper.jar
+              image: quay.io/k8snativedev/feed-scraper
+              name: feed-scraper
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: location-extractor
+      name: location-extractor
+      namespace: admin-che
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: location-extractor
+      template:
+        metadata:
+          labels:
+            app: location-extractor
+        spec:
+          containers:
+            - image: quay.io/k8snativedev/location_extractor
+              name: location-extractor
+              imagePullPolicy: Always
+              ports:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: news-backend
+      name: news-backend
+      namespace: admin-che
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: news-backend
+      template:
+        metadata:
+          labels:
+            app: news-backend
+        spec:
+          containers:
+            - env:
+                - name: backend.nlp.url
+                  value: http://location-extractor:8081/get_loc
+                - name: quarkus.datasource.jdbc.url
+                  value: jdbc:postgresql://postgis:5400/news?user=postgres&password=banane
+              image: quay.io/k8snativedev/news-backend
+              imagePullPolicy: Always
+              name: news-backend
+              ports:
+                - containerPort: 8080
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: news-frontend
+      name: news-frontend
+      namespace: admin-che
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: news-frontend
+      template:
+        metadata:
+          labels:
+            app: news-frontend
+        spec:
+          containers:
+            - image: quay.io/k8snativedev/news-frontend:minikube
+              imagePullPolicy: Always
+              name: news-frontend
+              ports:
+                - containerPort: 80
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: postgis
+      name: postgis
+      namespace: admin-che
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: postgis
+      template:
+        metadata:
+          labels:
+            app: postgis
+        spec:
+          containers:
+            - env:
+                - name: PGDATA
+                  value: /tmp/pgdata
+                - name: POSTGRESQL_DATABASE
+                  value: news
+                - name: POSTGRES_DB
+                  value: news
+                - name: POSTGRES_PASSWORD
+                  value: banane
+                - name: POSTGRES_USER
+                  value: postgres
+              image: postgis/postgis
+              imagePullPolicy: Always
+              name: postgis
+              ports:
+                - containerPort: 5432
+

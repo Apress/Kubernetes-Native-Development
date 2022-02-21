@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: news-backend-native
+  name: news-backend-native
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: news-backend-native
+  template:
+    metadata:
+      labels:
+        app: news-backend-native
+    spec:
+      containers:
+        - env:
+            - name: backend.nlp.url
+              value: http://location-extractor/get_loc
+            - name: quarkus.datasource.jdbc.url
+              value: jdbc:postgresql://postgis:5400/news?user=postgres&password=banane
+          image: quay.io/k8snativedev/news-backend:latest-native
+          imagePullPolicy: Always
+          name: news-backend-native
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            initialDelaySeconds: 0
+            periodSeconds: 1
+            failureThreshold: 10
+            httpGet:
+              port: 8080
+              path: /q/health/ready

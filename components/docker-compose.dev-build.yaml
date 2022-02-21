@@ -1,0 +1,64 @@
+version: "3"
+services:
+  news-frontend:
+        build:
+          context: news-frontend/.
+          dockerfile: Dockerfile.dev
+        restart: always
+        ports:
+          - 4200:4200
+        environment:
+          - NODE_IP=localhost
+          - NODE_PORT=8080
+        volumes:
+          - ./news-frontend/src:/opt/app-root/src/src
+  news-backend:
+        build:
+          context: news-backend/.
+          dockerfile: Dockerfile.dev
+        ports:
+          - '8080:8080'
+        restart: always
+        depends_on: 
+          - postgis
+        environment:
+          - quarkus.datasource.jdbc.url=jdbc:postgresql://postgis:5432/news?user=postgres&password=banane
+          - backend.nlp.url=http://location-extractor:5000/get_loc
+          - quarkus.http.host=0.0.0.0
+          - quarkus-profile=dev
+          - quarkus.datasource.devservices=false
+        volumes:
+          - ./news-backend/src:/app/src/
+  location-extractor:
+        build: 
+          context: location_extractor/.
+          dockerfile: Dockerfile.dev
+        ports:
+          - '5000:5000'
+        restart: always
+        volumes:
+          - ./location_extractor/src:/app/src/
+  feed-scraper:
+        build: 
+          context: feed-scraper/.
+          dockerfile: Dockerfile.build-multi
+        restart: always
+        depends_on: 
+          - news-backend
+        environment:
+          - SCRAPER_FEEDS_URL=http://feeds.bbci.co.uk/news/world/rss.xml
+          - SCRAPER_FEED_BACKEND_HOST=news-backend
+        entrypoint: ["java","-jar","/usr/local/lib/feed-scraper.jar"]
+  postgis:
+        image: postgis/postgis:12-master
+        ports:
+          - 5432:5432
+        environment:
+          - POSTGRESQL_DATABASE=news
+          - PGDATA=/tmp/pgdata
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=banane
+          - POSTGRES_DB=news
+
+
+

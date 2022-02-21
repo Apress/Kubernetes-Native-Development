@@ -1,0 +1,41 @@
+# Git repositories configure Argo CD with (optional).
+# This list is updated when configuring/removing repos from the UI/CLI
+# Note: the last example in the list would use a repository credential template, configured under "argocd-repo-creds.yaml".
+apiVersion: v1
+kind: Secret
+metadata:
+  name: localnewsrepo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: git@github.com:Javatar81/localnews.git
+  ### key is just for demonstration purpose and deactivated
+  sshPrivateKey: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEowIBAAKCADEAp+1JiKa92joXJRsYZS68BXE2X/IovgrIBGFHBcjVf5roEvrQ
+    bVsxjOwPZfiuhheR+A7Adp9mWRoPiFRkMgOrZ2rW2hdHkYHDAKevpMuz/Ra1hr5l
+    KdCNdQuvAjV1gkjeelxVct3Kxz53kVQXhsdoGprg7zEhDns6AlIVjShLnXnSwDI2
+    3bPBHJO9EGa81MV9cQ6mrgp1/tMnvDFhPrf7iHpT0YBE7K0pyecZfFE6aKsWSXXK
+    MCmuYtsurAr76WqblnS2GH3E2uApiR9mVY+guPem5ixBrGHDaJlE732alVgxbhzj
+    8qLrrr574JOQgIcUbEdhkgOCQsj8uNuuqlkNFwIDAQABAoIBAHuhzXOYH0qdXhDp
+    g+pqn+75zOiSpsBTu7LN07ZEiDrsV1Qx6GW6sB5qZWPT1NnQXJ1ebwBmlrme4DSk
+    vSe9X+JB3HCwlvZfrKu8ySnw91Cr+XV8k4pXiu3TbkOYDC2hbHp1pEtvUy2hpfIP
+    EUsfYFvGDzjK2OWKf8jZmhhUxGbo6lJIKan3FiDs6zIV2MdbqstZjnLUCl0zFIcF
+    53TSk8Sadsip8nGbmVyrYu0CfHvQtOwzKA1Iio03s4iotTbim63rpjVAHDyMLamA
+    KaXNJwmUDOLQvxE7zPfI/Ym5BsMsUfhIH5EXfpzILzSC7B95m8Fl0gz/S4lYsaw9
+    fWvmb2ECgYEA2KbeavETD6XQaFboqIlZskyYw5Bk/5XRd1EsWo12cCPeFBWKBibB
+    603CR6SSuqvcreWds6ER5CeoAi6rHWAo0HkjYu9lRgZ41pMyvm2O+yyVY+Z6mh/Y
+    XU89EXRPyGuDTBypaqxaUIQcLKgUqgz/Gz4j4u+oIBoPTWKAIvWHZskCgYEAxmz5
+    c5AB51vxRF35aTYURRgFpscAbYAp4vWnv9jLPtjC8P3di+5Tr9sPDtBRvB1iifsb
+    8lm8VMka08bLIUX+BqmzDh406ly0b5z1mxZ/V6K3DhCGjTYqepIWFaYT7+qtbQjm
+    g0DgdPFcLcUV4DWtwQessT8JqYcnqqnSGRtAZN8CgYEAm3YqNczlY54VTTnH22Ar
+    yACkwfg0MR6dXyQVUqkd6twh+IF4OG/JSQLUPTp/u4mlYfdZUVNsFi7KpT49tWeS
+    Af5bARxNrJDqVvbrO7A8IEperH/vS/c798DrTkILGgLkBVKv0wb4C7ywxu6ZXWjU
+    CgVuFOLp3pc0kc/zqKJM1dkCgYB0Nji27P2gceHRJ7S+YPToLpSIw/5FI43kpflU
+    S/VlXnB10kkh/jg3Q3YDOBDWuuMOaupIOzQo+AtlQwWO/D41ysfamehl5lurDuNt
+    rHRycBMEAru7EqE4Xjze+wCsP+bIeDEBaErNUtqo18fjI60a45LJ0GCpUEX0Fze8
+    ipBhQwKBgEZVoQb9wVkdigrc+VvOM0PthpsRKeWwHi3CvmK+EKQQuMo7nfNRDWI8
+    k+foQJ3LLD3WXqypmnPEXw7YjGLQZD/R8QV0TNtCWwbV4xEtMpyrE1y/GScmohtU
+    e8ODpG/F74oZ+4H/uF7xzf5dSDBKrKcb9cHpWyOzmgLOlBzFCMoE
+    -----END RSA PRIVATE KEY-----

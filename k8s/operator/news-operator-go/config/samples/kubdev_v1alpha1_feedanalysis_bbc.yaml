@@ -1,0 +1,9 @@
+apiVersion: kubdev.apress.com/v1alpha1
+kind: FeedAnalysis
+metadata:
+  name: feedanalysis-bbc
+spec:
+  feedscraper:
+    feedsUrl:
+    - "http://feeds.bbci.co.uk/news/world/rss.xml"
+

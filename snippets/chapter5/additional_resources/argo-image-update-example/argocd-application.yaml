@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: localnews
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: newsbackend=docker.io/maxisses/news-backend
+    argocd-image-updater.argoproj.io/newsbackend.pull-secret: pullsecret:argocd/gitops-pull-secret
+    argocd-image-updater.argoproj.io/newsbackend.helm.image-name: newsbackend.image
+    argocd-image-updater.argoproj.io/newsbackend.update-strategy: latest
+    argocd-image-updater.argoproj.io/newsbackend.allow-tags: regexp:^v1.0.0-[0-9a-zA-Z]+$
+    argocd-image-updater.argoproj.io/newsbackend.helm.image-tag: newsbackend.imageTag
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-branch: main
+  namespace: argocd
+spec:
+  destination:
+    namespace: newsbackend-integration
+    server: https://kubernetes.default.svc
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  source:
+    path: k8s/helm-chart
+    repoURL: git@github.com:Javatar81/localnews.git
+    targetRevision: main
+    # helm:
+    #   parameters:
+    #     - name: newsbackend.imageTag
+    #       value: manual-tagging

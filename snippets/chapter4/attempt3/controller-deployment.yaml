@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feed-crd-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feed-crd-controller
+  template:
+    metadata:
+      labels:
+        app: feed-crd-controller
+    spec:
+      serviceAccountName: controller-sa
+      containers:
+      - image: quay.io/k8snativedev/feed-crd-controller
+        name: feed-crd-controller
+        env:
+        - name: CRD_ANALYSIS_CONTROLLER_SCRAPERAPI_HOST
+          value: feed-scraper
+        - name: CRD_ANALYSIS_CONTROLLER_SCRAPERAPI_PORT
+          value: "9090"
+  
+          

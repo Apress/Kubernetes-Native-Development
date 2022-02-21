@@ -1,0 +1,28 @@
+domain: apress.com
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: news-operator-go
+repo: apress.com/m/v2
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: apress.com
+  group: kubdev
+  kind: LocalNewsApp
+  path: apress.com/m/v2/api/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: apress.com
+  group: kubdev
+  kind: FeedAnalysis
+  path: apress.com/m/v2/api/v1alpha1
+  version: v1alpha1
+version: "3"
