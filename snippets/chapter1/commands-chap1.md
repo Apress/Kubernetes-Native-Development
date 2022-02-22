@@ -46,7 +46,7 @@
     kubectl get rs webserver
 
 ##### delete a Pod and watch it getting respawned
-    kubectl delete webserver-YOURPODID
+    kubectl delete pod webserver-YOURPODID
     kubectl get rs webserver
 
 ##### delete the ReplicaSet which also deletes the associated Pods
@@ -111,7 +111,7 @@
     kubectl get pvc
 
 ##### Create a Deployment that creates Pods that bind to the PersistentVolumeClaim
-    kubectl apply -f snippets/chapter1/webserver-pvc-deployment.yaml”
+    kubectl apply -f snippets/chapter1/webserver-pvc-deployment.yaml
 
 ##### checking your frontend results in an error...
     minikube service webserver
@@ -135,7 +135,7 @@
     kubectl get pods -n dev
 
 ##### check the logs to inspect whether curl was successful
-    kubectl logs -n dev curl-service-fqdn-YOURPODIP
+    kubectl logs -n dev curl-service-fqdn-YOURPODID
 
 
 
