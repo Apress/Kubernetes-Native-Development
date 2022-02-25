@@ -4,7 +4,7 @@ metadata:
   name: webserver-ingress
 spec:
   rules:
-    - host: webserver.192.168.39.168.nip.io
+    - host: webserver.192.168.49.2.nip.io
       http:
         paths:
           - path: /
