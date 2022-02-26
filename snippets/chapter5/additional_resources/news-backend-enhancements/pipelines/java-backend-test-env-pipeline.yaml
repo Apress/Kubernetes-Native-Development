@@ -22,7 +22,7 @@ spec:
         name: git-clone
       params:
         - name: url
-          value: https://github.com/Javatar81/localnews
+          value: https://github.com/Apress/Kubernetes-Native-Development.git
         - name: deleteExisting
           value: 'true'
       workspaces:

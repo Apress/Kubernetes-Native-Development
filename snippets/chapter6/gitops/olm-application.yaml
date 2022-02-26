@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     path: k8s/operator/gitops/olm
-    repoURL: git@github.com:Javatar81/localnews.git
+    repoURL: git@github.com:Apress/Kubernetes-Native-Development.git
     targetRevision: HEAD
   syncPolicy:
     automated:

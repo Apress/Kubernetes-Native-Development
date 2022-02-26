@@ -7,7 +7,7 @@ metadata:
 spec:
   source:
     path: k8s/helm-chart
-    repoURL: git@github.com:Javatar81/localnews.git
+    repoURL: git@github.com:Apress/Kubernetes-Native-Development.git
     targetRevision: main
   destination:
     namespace: newsbackend-integration-gitops

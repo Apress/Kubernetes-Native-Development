@@ -4,9 +4,9 @@ kubectl create namespace news-backend-prod-dev
 kubectl -n news-backend-prod-dev apply -f snippets/chapter4/downward
 ## Listing 4-3. Get News-Backend Pod Logs showing Dev profile
 kubectl -n news-backend-prod-dev get pods
-kubectl -n news-backend-prod-dev logs news-backend-<your id>
+kubectl -n news-backend-prod-dev logs deployments/news-backend
 ## Set dev label to false in downward/news-backend-deployment.yaml then apply
-kubectl -n news-backend-prod-dev apply -f downward/news-backend-deployment.yaml
+kubectl -n news-backend-prod-dev apply -f snippets/chapter4/downward/news-backend-deployment.yaml
 ## Cleanup
 kubectl delete namespace news-backend-prod-dev
 ### Interacting with the Kubernetes API
@@ -18,7 +18,7 @@ helm -n localnews install localnews k8s/helm-chart
 ## Send Unauthorized POST Request to News-Backend
 minikube -n localnews service news-backend
 curl -X POST -H "Content-Type: application/json" -d '["http://test.com", "http://test2.com"]' $(echo | minikube -n localnews service news-backend --url)/scraper
-kubectl -n localnews logs news-backend-<your-id>
+kubectl -n localnews logs deploy/news-backend
 ## Authorize News-Backend to Create Deployments
 kubectl -n localnews create -f snippets/chapter4/api/mng-feedscaper-role.yaml
 kubectl -n localnews create -f snippets/chapter4/api/news-backend-sa.yaml

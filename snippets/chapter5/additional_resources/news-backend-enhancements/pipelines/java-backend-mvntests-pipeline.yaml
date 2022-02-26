@@ -13,7 +13,7 @@ spec:
       default: main
     - name: gitrepositoryurl
       description: The git repository url
-      default: git@github.com:Javatar81/localnews.git
+      default: git@github.com:Apress/Kubernetes-Native-Development.git
     - name: dockerfile
       type: string
       description: The name of the dockerfile to build

@@ -25,7 +25,7 @@ spec:
       - CreateNamespace=true
   source:
     path: k8s/helm-chart
-    repoURL: git@github.com:Javatar81/localnews.git
+    repoURL: git@github.com:Apress/Kubernetes-Native-Development.git
     targetRevision: main
     # helm:
     #   parameters:
