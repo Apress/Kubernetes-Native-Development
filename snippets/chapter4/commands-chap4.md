@@ -24,7 +24,7 @@ kubectl -n localnews create -f snippets/chapter4/api/mng-feedscaper-role.yaml
 kubectl -n localnews create -f snippets/chapter4/api/news-backend-sa.yaml
 kubectl -n localnews create -f snippets/chapter4/api/mng-feedscaper-rolebinding.yaml
 kubectl -n localnews apply -f snippets/chapter4/api/news-backend-deployment.yaml
-curl -X POST -H "Content-Type: application/json" -d '["http://test.com", "http://test2.com"]' $(echo | minikube -n localnews service news-backend --url)/scraper
+curl -X POST -H "Content-Type: application/json" -d '["http://rss.cnn.com/rss/edition_world.rss", "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml"]' $(echo | minikube -n localnews service news-backend --url)/scraper
 ### Defining our own Kubernetes resource types
 ## Change Feed URL
 kubectl apply -f snippets/chapter4/scraper/feed-scraper-deployment.yaml
