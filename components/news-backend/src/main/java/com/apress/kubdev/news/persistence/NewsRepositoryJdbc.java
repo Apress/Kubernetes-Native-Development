@@ -4,13 +4,13 @@ package com.apress.kubdev.news.persistence;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -50,27 +50,35 @@ public class NewsRepositoryJdbc implements NewsRepository{
 	@Inject
 	GeometryService geometryService;
 	
-	private AtomicBoolean schemaCheckSuccess = new AtomicBoolean(false);
-	
 	@Transactional
 	void startup(@Observes StartupEvent event) { 
 		try {
-			createSchemaIfNotExists();
+			LOGGER.info("Checking whether NEWS table exist on startup");
+			createTableAndIndexIfNotExists();
+			LOGGER.info("Check successful");
 		} catch (SQLException e) {
 			// We do not rethrow exception because startup will fail
-			LOGGER.error("Creating schema at startup failed. Please make sure that schema is up to date", e);
+			LOGGER.error("Creating NEWS table at startup failed. Deferring its creation to next SQL operation", e);
 		}
 	}
 
-	private void createSchemaIfNotExists() throws SQLException {
-		if (!schemaCheckSuccess.get()) {
-			LOGGER.info("Checking if schema exists");
+	private void createTableAndIndexIfNotExists() throws SQLException {
+		if (!newsTableExists()) {
+			LOGGER.info("NEWS table does not exist");
+			LOGGER.info("Assuring that NEWS table and index exists");
 			try (Connection con = defaultDataSource.getConnection();
 					PreparedStatement preparedStatement = con.prepareStatement(SQL_SCHEMA + SQL_GEO_INDEX)) {
 				preparedStatement.execute();
-				LOGGER.info("Created schema");
-				schemaCheckSuccess = new AtomicBoolean(true);
+				LOGGER.info("Successfully created NEWS table and index");
 			} 
+		}
+	}
+	
+	private boolean newsTableExists() throws SQLException {
+		try (Connection con = defaultDataSource.getConnection()) {
+			DatabaseMetaData meta = con.getMetaData();
+		    ResultSet resultSet = meta.getTables(null, null, "news", new String[] {"TABLE"});
+		    return resultSet.next();
 		}
 	}
 	
@@ -80,7 +88,7 @@ public class NewsRepositoryJdbc implements NewsRepository{
 		LOGGER.info("Inserting into database");
 		try (Connection con = defaultDataSource.getConnection();
 			PreparedStatement preparedStatement = con.prepareStatement(SQL_INSERT)) {
-			createSchemaIfNotExists();
+			createTableAndIndexIfNotExists();
 			preparedStatement.setString(1, changed.getTitle());
 			preparedStatement.setString(2, changed.getLink().toString());
 			preparedStatement.setString(3, changed.getDescription());
@@ -115,7 +123,7 @@ public class NewsRepositoryJdbc implements NewsRepository{
 		LOGGER.info("Updating news {} in database", changed.getId());
 		try (Connection con = defaultDataSource.getConnection();
 			PreparedStatement preparedStatement = con.prepareStatement(SQL_UPDATE)) {
-			createSchemaIfNotExists();
+			createTableAndIndexIfNotExists();
 			preparedStatement.setString(1, changed.getTitle());
 			preparedStatement.setString(2, changed.getLink().toString());
 			preparedStatement.setString(3, changed.getDescription());
@@ -147,7 +155,7 @@ public class NewsRepositoryJdbc implements NewsRepository{
 		LOGGER.info("Find by geo {}", bounds);
 		try (Connection con = defaultDataSource.getConnection();
 			PreparedStatement preparedStatement = con.prepareStatement(SQL_FIND_BY_GEO)) {
-			createSchemaIfNotExists();
+			createTableAndIndexIfNotExists();
 			addGeoDatatypes(con);
 			preparedStatement.setObject(1, geometry);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -166,7 +174,7 @@ public class NewsRepositoryJdbc implements NewsRepository{
 	public Optional<News> findById(Long id) {
 		try (Connection con = defaultDataSource.getConnection();
 			PreparedStatement preparedStatement = con.prepareStatement(SQL_FIND_BY_ID)) {
-			createSchemaIfNotExists();
+			createTableAndIndexIfNotExists();
 			addGeoDatatypes(con);
 			preparedStatement.setObject(1, id);
 			
@@ -221,7 +229,7 @@ public class NewsRepositoryJdbc implements NewsRepository{
 	{
 		try (Connection con = defaultDataSource.getConnection();
 				PreparedStatement preparedStatement = con.prepareStatement(SQL_DELETE_ALL_NEWS)) {
-			createSchemaIfNotExists();
+			createTableAndIndexIfNotExists();
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RepositoryException(e);
@@ -232,7 +240,7 @@ public class NewsRepositoryJdbc implements NewsRepository{
 	public Optional<News> findByLink(URL link) {
 		try (Connection con = defaultDataSource.getConnection();
 				PreparedStatement preparedStatement = con.prepareStatement(SQL_FIND_BY_LINK)) {
-				createSchemaIfNotExists();
+				createTableAndIndexIfNotExists();
 				addGeoDatatypes(con);
 				preparedStatement.setObject(1, link.toString());
 				
