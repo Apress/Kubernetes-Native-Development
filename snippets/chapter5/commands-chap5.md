@@ -168,10 +168,10 @@ http://localhost:9097/#/namespaces/localnews-pipelines/pipelineruns/
 ##### head over to the UI and log in with the password and user "admin"
 [localhost:8080](localhost:8080)
 ##### Listing 5-29. Commands to set up ArgoCD Application
-    ## only required for private repos, update the respective file with your own private SSH Key for e.g. Github
+    ## configure your Git repo, update the respective file with your own private SSH Key for e.g. Github
     kubectl apply -n argocd -f snippets/chapter5/gitops/argocd-repoaccess.yaml
     
-    ## adjust to your Git repository
+    ## configure your Git repository
     kubectl apply -n argocd -f snippets/chapter5/gitops/argocd-application.yaml
 
 ##### check the status of the application in Kubernetes

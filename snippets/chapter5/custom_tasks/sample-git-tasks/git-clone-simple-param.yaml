@@ -7,7 +7,7 @@ spec:
     - name: gitrepositoryurl
       description: The git repo to clone
       type: string
-      default: https://github.com/nginx/nginx.git
+      default: https://github.com/Apress/Kubernetes-Native-Development.git
   steps:
     - name: git-version
       image: docker.io/alpine/git

@@ -25,6 +25,10 @@ docker build --tag distrolessgo:latest .
 docker pull jboss/wildfly:23.0.1.Final
 docker images
 
+## Clean Up
+kubectl delete -f k8s/plain-manifests
+kubectl delete namespace localnews
+
 
 
 
