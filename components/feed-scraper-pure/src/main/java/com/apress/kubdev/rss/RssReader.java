@@ -33,7 +33,7 @@ public class RssReader {
 		marshaller.setProperty(MarshallerProperties.JSON_INCLUDE_ROOT, false);
 		SyndFeedInput input = new SyndFeedInput();
 	    SyndFeed feed = input.build(new XmlReader(feedUrl));
-	    feed.getEntries().stream().map(e -> new FeedItem(e.getTitle(), e.getLink(), e.getDescription().getValue()))
+	    feed.getEntries().stream().map(e -> new FeedItem(e.getTitle(), e.getLink(), e.getDescription() != null ? e.getDescription().getValue() : null))
 	    	.map(f -> feedToJson(marshaller, f))
 	    	.map(txt -> RequestBody.create(
 	            MediaType.parse("application/json; charset=utf-8"),
