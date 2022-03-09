@@ -53,7 +53,7 @@
 ## Clean Up
     kubectl delete -f k8s/plain-manifests/feed-scraper-deployment.yaml
 
-#### Dev-toK8s: Local development - Execution on Kubernetes
+#### Dev-to-K8s: Local development - Execution on Kubernetes
 
 ##### Listing 3-10. Deploying the News-Backend with odo on Kubernetes
     cd components/news-backend
@@ -72,7 +72,9 @@
     odo log news-backend --project news-backend-dev
 
 ##### Listing 3-12. Helm Chart Installation
+    cd ../..
     helm install news-backend-dev k8s/helm-chart -n news-backend-dev --set newsbackend.deployment="off"
+    ## as indicated in the book odo sometimes crashes - this is usually fixed with another "odo push --project news-backend-dev" from the components/news-backend folder; if that happened and you have no news items in the database, you can delete the feed-scraper pod to trigger the scraping process again
 
 ##### check status of the Pods
     kubectl get pods -n news-backend-dev
