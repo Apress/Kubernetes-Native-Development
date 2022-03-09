@@ -17,7 +17,7 @@ services:
           - postgis
         environment:
           - quarkus.datasource.jdbc.url=jdbc:postgresql://postgis:5432/news?user=postgres&password=banane
-          - com.apress.kubdev.news.nlp.NlpClient/mp-rest/url=http://location-extractor:5000/get_loc
+          - backend.nlp.url=http://location-extractor:80/get_loc
   location-extractor:
         build:
           context: .
@@ -33,7 +33,7 @@ services:
         depends_on: 
           - news-backend
         environment:
-          - SCRAPER_FEEDS_URL=http://rss.cnn.com/rss/edition_world.rss
+          - SCRAPER_FEEDS_URL=http://feeds.bbci.co.uk/news/world/rss.xml
           - SCRAPER_FEED_BACKEND_HOST=news-backend
         entrypoint: ["java","-jar","/usr/local/lib/feed-scraper.jar"]
   postgis:

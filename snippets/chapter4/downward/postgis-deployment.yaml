@@ -24,7 +24,7 @@ spec:
               value: banane
             - name: POSTGRES_USER
               value: postgres
-          image: postgis/postgis
+          image: postgis/postgis:12-master
           name: postgis
           ports:
             - containerPort: 5432

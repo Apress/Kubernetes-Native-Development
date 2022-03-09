@@ -17,7 +17,7 @@ spec:
         name: feed-scraper
         env:
         - name: SCRAPER_FEEDS_URL
-          value: http://rss.cnn.com/rss/edition_world.rss
+          value: https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml
         - name: SCRAPER_FEED_BACKEND_HOST
           value: news-backend 
   
