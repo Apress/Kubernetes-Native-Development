@@ -17,7 +17,7 @@ spec:
       containers:
         - env:
             - name: backend.nlp.url
-              value: http://location-extractor:8081/get_loc
+              value: http://location-extractor:80/get_loc
             - name: quarkus.datasource.jdbc.url
               value: jdbc:postgresql://postgis:5400/news?user=postgres&password=banane
             - name: backend.crd.enable
