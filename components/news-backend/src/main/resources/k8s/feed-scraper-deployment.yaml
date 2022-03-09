@@ -20,7 +20,5 @@ spec:
           image: quay.io/k8snativedev/feed-scraper
           name: feed-scraper
           env:
-            - name: SCRAPER_FEEDS_URL
-              value: http://feeds.bbci.co.uk/news/world/rss.xml
             - name: SCRAPER_FEED_BACKEND_HOST
               value: news-backend
