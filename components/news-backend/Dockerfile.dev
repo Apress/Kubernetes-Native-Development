@@ -2,7 +2,7 @@
 # Dev stage
 #
 FROM registry.access.redhat.com/ubi8/openjdk-11 AS build
-WORKDIR /app
-COPY pom.xml /app
-COPY . /app
+WORKDIR /home/jboss
+COPY pom.xml /home/jboss
+COPY . /home/jboss
 CMD ["./mvnw","compile","quarkus:dev"]
