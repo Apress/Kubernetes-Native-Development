@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Gauge;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -29,11 +30,18 @@ public class LocationExtractorAdapter implements TextAnalyzerService{
 	
 	@Override
 	public Optional<Location> getLocation(News news) {
-		LOGGER.info("Analyzing text '{}'", news.getDescription());
-		Map<String, AnalysisResult> results = extractorClient.analyzeText(news.getDescription());
-		if (!results.isEmpty()) {
-			return extractFirstLocation(results, 1);
+		
+		
+		if (StringUtils.isNotEmpty(news.getDescription())) {
+			LOGGER.info("Analyzing text '{}'", news.getDescription());
+			Map<String, AnalysisResult> results = extractorClient.analyzeText(news.getDescription());
+			if (!results.isEmpty()) {
+				return extractFirstLocation(results, 1);
+			} else {
+				return Optional.empty();
+			}
 		} else {
+			LOGGER.info("Skip analyzing empty text");
 			return Optional.empty();
 		}
 	}
