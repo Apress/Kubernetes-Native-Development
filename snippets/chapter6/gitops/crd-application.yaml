@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     path: k8s/operator/gitops/crd
-    repoURL: git@github.com:Apress/Kubernetes-Native-Development.git
+    repoURL: https://github.com/Apress/Kubernetes-Native-Development.git
     targetRevision: HEAD
   syncPolicy:
     automated:
