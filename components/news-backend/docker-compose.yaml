@@ -24,7 +24,7 @@ services:
           - quarkus-profile=dev
           - quarkus.datasource.devservices=false
         volumes:
-          - ./src:/app/src/
+          - ./src:/app/src
   location-extractor:
         image: quay.io/k8snativedev/location_extractor
         ports:

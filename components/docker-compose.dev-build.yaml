@@ -28,7 +28,7 @@ services:
           - quarkus-profile=dev
           - quarkus.datasource.devservices=false
         volumes:
-          - ./news-backend/src:/app/src/
+          - ./news-backend/src:/home/jboss/src/
   location-extractor:
         build: 
           context: location_extractor/.
