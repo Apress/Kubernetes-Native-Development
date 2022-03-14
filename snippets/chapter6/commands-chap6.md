@@ -21,7 +21,7 @@
     kubectl get pods
 ### Modifying the CRD by adding Helm parameters
     kubectl apply -f snippets/chapter6/news-sample2.yaml
-    helm-list
+    helm list
 
 #### Manual update of the file snippets/chapter6/news-sample3.yaml
     minikube ip
@@ -63,7 +63,7 @@
 
 #### apply the changes and restart the Operator install
     make -C k8s/operator/localnews-operator-helm install run
-    ## change terminal session
+    ## change terminal session to root folder
 #### install the Local News App by applying a new CR
     kubectl apply -f snippets/chapter6/news-sample4.yaml
 #### create a FeedScraper instance via a CR
@@ -80,7 +80,8 @@
 ### Deploying our Operator to Kubernetes
 
 #### build an Image of the Operator
-    IMG=docker.io/maxisses/news-operator:0.0.1
+    ## e.g. quay.io/k8snativedev/... or docker.io/yourusername/...
+    IMG=<your-repo>/news-operator:0.0.1
     ## dont forget to docker login
     make -C k8s/operator/localnews-operator-helm docker-build docker-push IMG=$IMG    
 #### install the operator to the cluster
@@ -105,10 +106,12 @@
 ### Deploying Operators via OLM without Operator SDK
     operator-sdk olm install --version v0.19.1
 #### Generating the OLM bundle for our own Operator
-    IMG=docker.io/maxisses/news-operator:0.0.1
+    ## e.g. quay.io/k8snativedev/... or docker.io/yourusername/...
+    IMG=<your-repo>/news-operator:0.0.1
     make -C k8s/operator/localnews-operator-helm bundle IMG=$IMG
 #### Building and pushing the OLM bundle image
-    BUNDLE_IMG=docker.io/maxisses/localnews-operator-bundle:v0.0.1
+    ## e.g. quay.io/k8snativedev/... or docker.io/yourusername/...
+    BUNDLE_IMG=<your-repo>/localnews-operator-bundle:v0.0.1
     make -C k8s/operator/localnews-operator-helm bundle-build BUNDLE_IMG=$BUNDLE_IMG
     make -C k8s/operator/localnews-operator-helm bundle-push BUNDLE_IMG=$BUNDLE_IMG
 
