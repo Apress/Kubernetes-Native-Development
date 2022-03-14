@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: location-extractor
+  name: location-extractor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: location-extractor
+  template:
+    metadata:
+      labels:
+        app: location-extractor
+    spec:
+      containers:
+        - image: quay.io/k8snativedev/location_extractor
+          name: location-extractor
+          ports:
+            - containerPort: 80

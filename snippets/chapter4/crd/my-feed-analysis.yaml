@@ -4,4 +4,4 @@ metadata:
   name: my-feed
 spec:
   urls: 
-    - http://rss.cnn.com/rss/edition_world.rss
+    - https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml
