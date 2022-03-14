@@ -34,6 +34,13 @@ spec:
       type: string
       description: The namespace to deploy in
       default: newsbackend-integration
+    - name: mvn_options
+      type: array
+      description: Additional mvn params
+      default:
+        - clean
+        - package
+        - "-DskipTests=true"
   workspaces:
     - name: shared-workspace
     - name: maven-settings
@@ -61,9 +68,7 @@ spec:
           value: "components/$(params.component)"
         - name: GOALS
           value:
-          - clean
-          - package
-          - -DskipTests=true
+          - $(params.mvn_options)
       runAfter:
         - clone-sources
       workspaces:

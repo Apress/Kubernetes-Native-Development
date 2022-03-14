@@ -1,4 +1,4 @@
-export GIT_REPO=git@github.com:Javatar81/localnews.git
+export GIT_REPO=https://github.com/Apress/Kubernetes-Native-Development.git
 export CONTAINER_IMAGE_REPO=quay.io/k8snativedev
 
 ###Location-Extractor build Pipe
@@ -54,3 +54,15 @@ tkn pipeline start -n localnews-pipelines news-backend-build-pipe \
     --param component=news-backend \
     --param image_version=latest \
     --use-param-defaults 
+
+###Quarkus News-Backend Mutable Jar build Pipe (to start container e.g. in Dev mode)
+tkn pipeline start -n localnews-pipelines news-backend-build-pipe \
+    --workspace name=shared-workspace,volumeClaimTemplateFile=snippets/chapter5/persistence/volumeclaimtemplate.yaml \
+    --workspace name=maven-settings,emptyDir="" \
+    --serviceaccount=clone-and-build-bot \
+    --param gitrepositoryurl=$GIT_REPO \
+    --param image_repo=$CONTAINER_IMAGE_REPO \
+    --param component=news-backend \
+    --param image_version=latest-dev \
+    --param mvn_options='clean,package,-DskipTests=true,-Dquarkus.package.type=mutable-jar' \
+    --use-param-defaults
