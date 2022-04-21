@@ -27,7 +27,7 @@ export class MapComponent implements AfterViewInit {
 
   private initMap(): void {
     this.map = L.map('map', {
-      center: [ 39.8282, -98.5795 ],
+      center: [ 39.8282, -18.5795 ],
       zoom: 3
     });
 
@@ -39,6 +39,17 @@ export class MapComponent implements AfterViewInit {
 
     tiles.addTo(this.map);
     var self = this;
+
+    var southWest = L.latLng(-8.501445495750618, -33.232239902019504),
+	        northEast = L.latLng(13.354130902170063, -19.0806285738945),
+	        bounds = L.latLngBounds(southWest, northEast);
+
+    L.rectangle(bounds, {color: "black", weight: 3}).addTo(this.map);
+
+    var marker = L.marker([6.354130902170063, -30.232239902019504], { opacity: 0.0 }); //opacity may be set to zero
+    marker.bindTooltip("No location found :)", {permanent: true, className: "unlocated", offset: [0, 0] });
+    marker.addTo(this.map);
+
 	this.map.on('dragend', function(e) {
    		 self.newsService.drawMarkersForNews(self.map);
 	});
