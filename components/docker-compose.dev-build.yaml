@@ -8,7 +8,7 @@ services:
         ports:
           - 4200:4200
         environment:
-          - NODE_IP=http://192.168.99.100/
+          - NODE_IP=localhost
           - NODE_PORT=8080
         volumes:
           - ./news-frontend/src:/opt/app-root/src/src
