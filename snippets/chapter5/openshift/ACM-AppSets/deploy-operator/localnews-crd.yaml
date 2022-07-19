@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: localnews-operator-instance
+  namespace: openshift-gitops
+spec:
+  generators:
+    - clusterDecisionResource:
+        configMapRef: acm-placement
+        labelSelector:
+          matchLabels:
+            cluster.open-cluster-management.io/placement: localnews-operator-instance-placement
+        requeueAfterSeconds: 60
+  template:
+    metadata:
+      name: localnews-operator-instance-{{name}}
+      labels:
+        velero.io/exclude-from-backup: "true"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/sa-mw-dach/local-news-shift.git
+        targetRevision: openshift
+        path: k8s/operator/gitops/crd
+      destination:
+        namespace: localnews-operator-installed
+        server: "{{server}}"
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: localnews-operator-instance-placement
+  namespace: openshift-gitops
+spec:
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: cloud
+              operator: In
+              values:
+                - IBM

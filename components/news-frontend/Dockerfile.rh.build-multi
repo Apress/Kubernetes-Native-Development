@@ -18,9 +18,8 @@ LABEL maintainer="Max Dargatz"
 
 COPY --from=builder /opt/app-root/src/dist/news-frontend .
 
-## customize for https and file permissions for rootless
-RUN sed -i 's/http/https/g' assets/settings.template.json && \
-    chgrp -R 0 /opt/app-root/src/assets && \
+## customize for file permissions for rootless
+RUN chgrp -R 0 /opt/app-root/src/assets && \
     chmod -R g=u /opt/app-root/src/assets
 
 USER 1001

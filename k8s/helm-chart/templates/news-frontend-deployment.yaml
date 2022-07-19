@@ -30,9 +30,11 @@ spec:
                 fieldRef:
                   fieldPath: status.hostIP
           {{ else if eq .Values.newsfrontend.backendConnection "viaIngress" }}
+            - name: {{ .Values.newsfrontend.envVars.backend.prefix.key }}
+              value: {{ .Values.newsfrontend.envVars.backend.prefix.value }}
             - name: {{ .Values.newsfrontend.envVars.backend.nodePort.key }}
-              value: "80"
+              value: "{{ .Values.newsfrontend.envVars.backend.nodePort.value }}"
             - name: {{ .Values.newsfrontend.envVars.backend.ip.key }}
-              value: {{ .Values.newsbackend.name }}.{{ .Values.localnews.minikubeIp }}.{{ .Values.localnews.domain }}
+              value: {{ .Values.newsbackend.name }}.{{ .Values.localnews.domain }}
           {{ end }}
 {{ end }}

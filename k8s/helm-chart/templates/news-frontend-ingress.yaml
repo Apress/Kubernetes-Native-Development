@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: {{ .Values.newsfrontend.name }}.{{ .Values.localnews.minikubeIp }}.{{ .Values.localnews.domain }}
+    - host: {{ .Values.newsfrontend.name }}.{{ .Values.localnews.domain }}
       http:
         paths:
           - path: /

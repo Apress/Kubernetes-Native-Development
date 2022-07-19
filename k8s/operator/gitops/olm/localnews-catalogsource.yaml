@@ -2,7 +2,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
   name: localnews-catalog
-  namespace: operators
+  namespace: openshift-gitops
 spec:
   sourceType: grpc
   image: quay.io/k8snativedev/news-operator-catalog:0.0.1

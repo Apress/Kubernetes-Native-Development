@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pipeline-binding
+subjects:
+- kind: ServiceAccount
+  name: pipeline
+  namespace: localnews-pipelines
+- kind: ServiceAccount
+  name: deploy
+  namespace: newsbackend-integration
+roleRef:
+  kind: ClusterRole
+  name: pipeline-role
+  apiGroup: rbac.authorization.k8s.io

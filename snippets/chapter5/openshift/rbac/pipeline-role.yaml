@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pipeline-role
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["configmaps", "secrets", "services", "pods"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "apply"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "statefulsets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "apply"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
+- verbs:
+    - use
+  apiGroups:
+    - security.openshift.io
+  resources:
+    - securitycontextconstraints
+  resourceNames:
+    - nonroot
+  
+  

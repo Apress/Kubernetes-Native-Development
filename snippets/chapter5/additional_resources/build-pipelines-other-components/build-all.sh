@@ -1,8 +1,7 @@
 export GIT_REPO=https://github.com/Apress/Kubernetes-Native-Development.git
-export CONTAINER_IMAGE_REPO=quay.io/k8snativedev
-
+export CONTAINER_IMAGE_REPO=docker.io/maxisses
 ###Location-Extractor build Pipe
-tkn pipeline start -n localnews-pipelines location-extractor-build-pipe \
+tkn pipeline start -n localnews location-extractor-build-pipe \
     --workspace name=shared-workspace,volumeClaimTemplateFile=snippets/chapter5/persistence/volumeclaimtemplate.yaml \
     --serviceaccount=clone-and-build-bot \
     --param gitrepositoryurl=$GIT_REPO \
@@ -12,7 +11,7 @@ tkn pipeline start -n localnews-pipelines location-extractor-build-pipe \
     --use-param-defaults 
 
 ###Java Feedscraper FULL build Pipe
-tkn pipeline start -n localnews-pipelines feed-scraper-build-pipe \
+tkn pipeline start -n localnews feed-scraper-build-pipe \
     --workspace name=shared-workspace,volumeClaimTemplateFile=snippets/chapter5/persistence/volumeclaimtemplate.yaml \
     --workspace name=maven-settings,emptyDir="" \
     --serviceaccount=clone-and-build-bot \
@@ -23,7 +22,7 @@ tkn pipeline start -n localnews-pipelines feed-scraper-build-pipe \
     --use-param-defaults 
 
 ###Java Feedscraper PURE/JOB build Pipe
-tkn pipeline start -n localnews-pipelines feed-scraper-job-build-pipe \
+tkn pipeline start -n localnews feed-scraper-job-build-pipe \
     --workspace name=shared-workspace,volumeClaimTemplateFile=snippets/chapter5/persistence/volumeclaimtemplate.yaml \
     --workspace name=maven-settings,emptyDir="" \
     --serviceaccount=clone-and-build-bot \
@@ -35,7 +34,7 @@ tkn pipeline start -n localnews-pipelines feed-scraper-job-build-pipe \
     --use-param-defaults 
 
 ###News-Frontend Buíld Pipe
-tkn pipeline start -n localnews-pipelines news-frontend-build-pipe \
+tkn pipeline start -n localnews news-frontend-build-pipe \
     --workspace name=shared-workspace,volumeClaimTemplateFile=snippets/chapter5/persistence/volumeclaimtemplate.yaml \
     --serviceaccount=clone-and-build-bot \
     --param gitrepositoryurl=$GIT_REPO \
@@ -45,7 +44,7 @@ tkn pipeline start -n localnews-pipelines news-frontend-build-pipe \
     --use-param-defaults 
 
 ###Quarkus News-Backend build Pipe
-tkn pipeline start -n localnews-pipelines news-backend-build-pipe \
+tkn pipeline start -n localnews news-backend-build-pipe \
     --workspace name=shared-workspace,volumeClaimTemplateFile=snippets/chapter5/persistence/volumeclaimtemplate.yaml \
     --workspace name=maven-settings,emptyDir="" \
     --serviceaccount=clone-and-build-bot \
@@ -56,7 +55,7 @@ tkn pipeline start -n localnews-pipelines news-backend-build-pipe \
     --use-param-defaults 
 
 ###Quarkus News-Backend Mutable Jar build Pipe (to start container e.g. in Dev mode)
-tkn pipeline start -n localnews-pipelines news-backend-build-pipe \
+tkn pipeline start -n localnews news-backend-build-pipe \
     --workspace name=shared-workspace,volumeClaimTemplateFile=snippets/chapter5/persistence/volumeclaimtemplate.yaml \
     --workspace name=maven-settings,emptyDir="" \
     --serviceaccount=clone-and-build-bot \

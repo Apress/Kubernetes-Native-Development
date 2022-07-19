@@ -1,0 +1,134 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: news-backend-simple-pipe-gitops
+spec:
+  params:
+    - name: component
+      type: string
+      description: The name of the component to build
+      default: news-backend
+    - name: gitrevision
+      description: The git revision
+      default: main
+    - name: gitrepositoryurl
+      description: The git repository url
+      default: git@github.com:sa-mw-dach/local-news-shift.git
+    - name: dockerfile
+      type: string
+      description: The name of the dockerfile to build
+      default: ./src/main/docker/Dockerfile.jvm
+    - name: image_repo
+      type: string
+      description: The image repository to push the resulting image to
+      default: quay.io/k8snativedev
+    - name: image_version
+      type: string
+      description: The image version
+      default: latest
+  workspaces:
+    - name: shared-workspace
+    - name: maven-settings
+  tasks:
+    - name: clone-sources
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      params:
+        - name: url
+          value: $(params.gitrepositoryurl)
+        - name: revision 
+          value: $(params.gitrevision)
+        - name: deleteExisting
+          value: 'true'
+        - name: submodules
+          value: "false"
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    - name: maven-build
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      params:
+        - name: CONTEXT_DIR
+          value: "components/$(params.component)"
+        - name: GOALS
+          value:
+          - clean
+          - package
+          - -DskipTests=true
+      runAfter:
+        - clone-sources
+      workspaces:
+        - name: maven-settings
+          workspace: maven-settings
+        - name: source
+          workspace: shared-workspace
+    - name: build-and-push-image
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      params:
+        - name: CONTEXT
+          value: components/$(params.component)
+        - name: TLSVERIFY
+          value: "true"
+        - name: DOCKERFILE
+          value: "$(params.dockerfile)"
+        - name: IMAGE
+          value: $(params.image_repo)/$(params.component):$(params.image_version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - maven-build
+    - name: replace-image-tag-in-helm-chart
+      taskRef:
+        name: yq
+      params:
+        - name: files
+          value:
+          - "./k8s/helm-chart/values-openshift.yaml"
+        - name: expression
+          value: '(.newsbackend.imageTag = \"$(params.image_version)\") | (.newsbackend.image = \"$(params.image_repo)/$(params.component)\")'
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      runAfter:
+        - build-and-push-image
+    - name: git-push-update-helm
+      taskRef:
+        kind: ClusterTask
+        name: git-cli
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: GIT_USER_NAME
+          value: tektonpiperunner
+        - name: GIT_USER_EMAIL
+          value: tektonpiperunner@k8snativedev.com          
+        - name: GIT_SCRIPT
+          value: |
+            git add ./k8s/helm-chart/values-openshift.yaml
+            git commit -m "updated helm cart with Image Tag '$(params.image_version)' commit for $(params.component)"
+            git push origin HEAD:openshift
+      runAfter:
+        - replace-image-tag-in-helm-chart
+    - name: check-successful-sync
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      params:        
+        - name: SCRIPT
+          value: |
+            #!/bin/bash
+            set -e
+            while [ $(oc get deployments -n newsbackend-integration-gitops news-backend -o jsonpath="{.spec.template.spec.containers[:1].image}") != $(params.image_repo)/$(params.component):$(params.image_version) ]
+              do
+                echo "Waiting for successful ArgoCD sync - checking in another 3 seconds"
+                sleep 3
+              done
+      runAfter:
+        - replace-image-tag-in-helm-chart
