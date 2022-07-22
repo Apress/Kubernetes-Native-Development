@@ -10,7 +10,7 @@ feedscraper:
   name: feed-scraper
   replicaCount: 1
   image: quay.io/k8snativedev/feed-scraper
-  imageTag: latest
+  imageTag: openshift
   envVars:
     feeds:
       key: SCRAPER_FEEDS_URL
@@ -63,7 +63,7 @@ locationextractor:
   name: location-extractor
   replicaCount: 1
   image: quay.io/k8snativedev/location_extractor
-  imageTag: nonroot
+  imageTag: openshift
   ports:
     containerPort: 5000
     servicePort: 8081
@@ -73,7 +73,7 @@ newsfrontend:
   name: news-frontend
   replicaCount: 1
   image: quay.io/k8snativedev/news-frontend
-  imageTag: nonroot
+  imageTag: openshift
   ports:
     containerPort: 8080
     servicePort: 80
