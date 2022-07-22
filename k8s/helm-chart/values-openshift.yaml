@@ -24,7 +24,7 @@ newsbackend:
   name: news-backend
   replicaCount: 1
   image: quay.io/k8snativedev/news-backend
-  imageTag: latest
+  imageTag: openshift
   ports:
     containerPort: 8080
     servicePort: 8080
