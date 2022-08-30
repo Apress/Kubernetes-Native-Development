@@ -10,7 +10,7 @@ spec:
     - name: component
       value: news-backend
     - name: gitrepositoryurl
-      value: 'git@github.com:sa-mw-dach/local-news-shift.git'
+      value: 'git@github.com:Apress/Kubernetes-Native-Development.git'
     - name: gitrevision
       value: openshift
     - name: image_repo
