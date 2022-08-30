@@ -16,12 +16,12 @@ spec:
                 secretKey: secretToken
             - name: "eventTypes"
               value: ["push"]
-        - name: "only deploy on pushes to main branch"
+        - name: "only deploy on pushes to openshift branch"
           ref:
             name: "cel"
           params:
             - name: "filter"
-              value: "body.ref in ['refs/heads/main']"
+              value: "body.ref in ['refs/heads/openshift']"
       bindings:
         - ref: github-push-binding
       template:
