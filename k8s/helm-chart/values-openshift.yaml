@@ -4,7 +4,7 @@
 
 localnews:
   imagePullPolicy: Always
-  domain: pairs-63bfee21520d44b1a6365103e4b1c7db-0000.eu-de.containers.appdomain.cloud
+  domain: <<<your-cluster-ingress-subdomain>>>
 feedscraper:
   deployment: "on"
   name: feed-scraper
@@ -78,7 +78,7 @@ newsfrontend:
     containerPort: 8080
     servicePort: 80
     nodePort: 31111
-  backendConnection: "viaIngress" # alternative is "viaIngress" which requires to fill in minikube ip if running on minikube at localnews.minikubeIp
+  backendConnection: "viaIngress" # alternative is viaNodePort
   envVars:
     backend:
       prefix:

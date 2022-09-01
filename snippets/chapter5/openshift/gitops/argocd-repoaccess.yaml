@@ -6,7 +6,7 @@ metadata:
   labels:
     argocd.argoproj.io/secret-type: repository
 stringData:
-  url: git@github.com:sa-mw-dach/local-news-shift.git
+  url: git@github.com:Apress/Kubernetes-Native-Development.git
   ### key is just for demonstration purpose and deactivated
   sshPrivateKey: |
     -----BEGIN OPENSSH PRIVATE KEY-----

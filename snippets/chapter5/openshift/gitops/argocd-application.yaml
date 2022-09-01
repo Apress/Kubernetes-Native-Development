@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/sa-mw-dach/local-news-shift.git'
+    repoURL: 'https://github.com/Apress/Kubernetes-Native-Development.git'
     path: k8s/helm-chart
     targetRevision: openshift
     helm:
