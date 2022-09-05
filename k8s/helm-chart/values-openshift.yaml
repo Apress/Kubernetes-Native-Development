@@ -4,7 +4,7 @@
 
 localnews:
   imagePullPolicy: Always
-  domain: <<<your-cluster-ingress-subdomain goes here>>> ## take it from your browser, usually looks something like apps.ocp4.stormshift.coe.muc.redhat.com
+  domain: your-cluster-ingress-subdomain-goes-here ## take it from your browser, usually looks something like apps.ocp4.stormshift.coe.muc.redhat.com
 feedscraper:
   deployment: "on"
   name: feed-scraper
