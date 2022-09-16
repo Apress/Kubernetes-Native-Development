@@ -14,6 +14,10 @@ spec:
     metadata:
       labels:
         app: {{ .Values.newsfrontend.name }}
+      annotations:
+        {{ if eq .Values.newsfrontend.servicemesh "true" }}
+        sidecar.istio.io/inject: "true"
+        {{ end }}
     spec:
       containers:
         - image: {{ .Values.newsfrontend.image }}:{{ .Values.newsfrontend.imageTag }}
