@@ -19,7 +19,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/sa-mw-dach/local-news-shift.git
+        repoURL: https://github.com/Apress/Kubernetes-Native-Development.git
         targetRevision: openshift
         path: k8s/helm-chart
         helm:
