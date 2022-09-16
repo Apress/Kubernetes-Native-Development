@@ -4,16 +4,19 @@ kind: Deployment
 metadata:
   labels:
     app: {{ .Values.locationextractor.name }}
+    version: v1
   name: {{ .Values.locationextractor.name }}
 spec:
   replicas: {{ .Values.locationextractor.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Values.locationextractor.name }}
+      version: v1
   template:
     metadata:
       labels:
         app: {{ .Values.locationextractor.name }}
+        version: v1
       annotations:
         {{ if eq .Values.locationextractor.servicemesh "true" }}
         sidecar.istio.io/inject: "true"

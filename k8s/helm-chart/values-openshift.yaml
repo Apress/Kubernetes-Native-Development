@@ -6,7 +6,7 @@ localnews:
   imagePullPolicy: Always
   domain: your-cluster.domain ## take it from your browser, usually looks something like apps.ocp4.stormshift.coe.muc.redhat.com
 feedscraper:
-  servicemesh: "false"
+  servicemesh: "true"
   deployment: "on"
   name: feed-scraper
   replicaCount: 1

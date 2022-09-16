@@ -7,7 +7,8 @@ metadata:
   name: {{ .Values.newsfrontend.name }}
 spec:
   ports:
-    - port: {{ .Values.newsfrontend.ports.servicePort }}
+    - name: http
+      port: {{ .Values.newsfrontend.ports.servicePort }}
       targetPort: {{ .Values.newsfrontend.ports.containerPort }}
       nodePort: {{ .Values.newsfrontend.ports.nodePort }}
   selector:
