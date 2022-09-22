@@ -52,7 +52,7 @@ def get_coords():
         print("Not found any location in this text", flush=True)
         jsonDict = {
                         "1": {
-                            "extracted location": "none",
+                            "extracted mirror location": "none",
                             "generated address": "Brisbane City, Queensland, Australia",
                             "latitude": 0.4689682 - random.uniform(0.1, 5),
                             "longitude": -30.0234991 + random.uniform(0.1, 5)
