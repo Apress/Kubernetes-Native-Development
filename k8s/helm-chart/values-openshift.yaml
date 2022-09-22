@@ -15,7 +15,7 @@ feedscraper:
   envVars:
     feeds:
       key: SCRAPER_FEEDS_URL
-      value: http://feeds.bbci.co.uk/news/world/rss.xml
+      value: http://feeds.bbci.co.uk/news/world/rss.xml, https://www.aljazeera.com/xml/rss/all.xml, https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml, http://rss.cnn.com/rss/edition_world.rss, https://timesofindia.indiatimes.com/rssfeeds/296589292.cms, https://www.cnbc.com/id/100727362/device/rss/rss.html 
     backend:
       key: SCRAPER_FEED_BACKEND_HOST
       value: news-backend
