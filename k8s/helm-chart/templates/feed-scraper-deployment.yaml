@@ -13,7 +13,7 @@ spec:
       labels:
         app: {{ .Values.feedscraper.name }}
       annotations:
-        {{ if eq .Values.feedscraper.servicemesh "true" }}
+        {{ if eq .Values.localnews.servicemesh "on" }}
         sidecar.istio.io/inject: "true"
         {{ end }}
     spec:

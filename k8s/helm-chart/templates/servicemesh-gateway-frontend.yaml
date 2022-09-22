@@ -1,0 +1,32 @@
+{{ if eq .Values.localnews.servicemesh "on" }}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ .Values.newsfrontend.name }}
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - {{ .Values.newsfrontend.name }}.{{ .Values.localnews.domain }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .Values.newsfrontend.name }}
+spec:
+  hosts:
+  - {{ .Values.newsfrontend.name }}.{{ .Values.localnews.domain }}
+  gateways:
+  - {{ .Values.newsfrontend.name }}
+  http:
+  - route:
+    - destination:
+        host: {{ .Values.newsfrontend.name }}
+        port:
+          number: {{ .Values.newsfrontend.ports.servicePort }}
+{{ end }}

@@ -5,8 +5,8 @@
 localnews:
   imagePullPolicy: Always
   domain: your-cluster.domain ## take it from your browser, usually looks something like apps.ocp4.stormshift.coe.muc.redhat.com
+  servicemesh: "off"
 feedscraper:
-  servicemesh: "true"
   deployment: "on"
   name: feed-scraper
   replicaCount: 1
@@ -20,7 +20,6 @@ feedscraper:
       key: SCRAPER_FEED_BACKEND_HOST
       value: news-backend
 newsbackend:
-  servicemesh: "true"
   deployment: "on"
   service: "on"
   name: news-backend
@@ -60,7 +59,6 @@ postgis:
       key: POSTGRES_USER
       value: postgres
 locationextractor:
-  servicemesh: "true"
   deployment: "on"
   service: "on"
   name: location-extractor
@@ -71,7 +69,6 @@ locationextractor:
     containerPort: 5000
     servicePort: 8081
 newsfrontend:
-  servicemesh: "true"
   deployment: "on"
   service: "on"
   name: news-frontend

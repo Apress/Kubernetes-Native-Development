@@ -15,7 +15,7 @@ spec:
       labels:
         app: {{ .Values.newsfrontend.name }}
       annotations:
-        {{ if eq .Values.newsfrontend.servicemesh "true" }}
+        {{ if eq .Values.localnews.servicemesh "on" }}
         sidecar.istio.io/inject: "true"
         {{ end }}
     spec:

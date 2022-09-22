@@ -18,7 +18,7 @@ spec:
         app: {{ .Values.locationextractor.name }}
         version: v1
       annotations:
-        {{ if eq .Values.locationextractor.servicemesh "true" }}
+        {{ if eq .Values.localnews.servicemesh "on" }}
         sidecar.istio.io/inject: "true"
         {{ end }}
     spec:
