@@ -10,9 +10,13 @@ spec:
     - name: http
       port: {{ .Values.newsfrontend.ports.servicePort }}
       targetPort: {{ .Values.newsfrontend.ports.containerPort }}
+      {{ if eq .Values.newsfrontend.backendConnection "viaNodePort" }}
       nodePort: {{ .Values.newsfrontend.ports.nodePort }}
+      {{ end }}
   selector:
     app: {{ .Values.newsfrontend.name }}
+  {{ if eq .Values.newsfrontend.backendConnection "viaNodePort" }}
   type: NodePort
+  {{ end }}
 {{ end }}
 
