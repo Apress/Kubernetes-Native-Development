@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: {{ .Values.newsbackend.name }}.{{ .Values.localnews.domain }}
+    - host: {{ .Values.newsbackend.name }}-{{ .Release.Namespace }}.apps.{{ .Values.localnews.domain }}
       http:
         paths:
           - path: /

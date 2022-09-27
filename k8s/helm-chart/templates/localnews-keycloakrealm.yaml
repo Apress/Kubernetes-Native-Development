@@ -1,0 +1,18 @@
+{{ if eq .Values.localnews.sso.enabled "on" }}
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakRealm
+metadata:
+  name: localnews-realm
+  namespace: {{ .Release.Namespace }}-{{ .Values.localnews.sso.namespacepostfix }}
+  labels:
+    app: sso
+spec:
+  instanceSelector:
+    matchLabels:
+      app: sso 
+  realm:
+    displayName: LocalNews Realm
+    enabled: true
+    id: localnews
+    realm: localnews
+{{ end }}

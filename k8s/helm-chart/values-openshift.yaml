@@ -13,6 +13,11 @@ localnews:
     dataplane:
       mtls: 
         strict: "off"
+  sso:
+    enabled: "on"
+    namespacepostfix: "sso"
+    client:
+      secret: "ZHNnc0RHJT9zZGc/c0VUCg==" 
   userworkloadmonitoring: "off"
 feedscraper:
   deployment: "on"
@@ -84,7 +89,7 @@ newsfrontend:
   image: quay.io/k8snativedev/news-frontend
   imageTag: openshift
   ports:
-    containerPort: 8080
+    containerPort: 4180
     servicePort: 80
     nodePort: 31111
   backendConnection: "viaIngress" # alternative is viaNodePort

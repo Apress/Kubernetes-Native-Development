@@ -12,7 +12,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - {{ .Values.newsfrontend.name }}.{{ .Values.localnews.domain }}
+    - {{ .Values.newsfrontend.name }}-{{ .Release.Namespace }}.apps.{{ .Values.localnews.domain }}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -20,7 +20,7 @@ metadata:
   name: {{ .Values.newsfrontend.name }}
 spec:
   hosts:
-  - {{ .Values.newsfrontend.name }}.{{ .Values.localnews.domain }}
+  - {{ .Values.newsfrontend.name }}-{{ .Release.Namespace }}.apps.{{ .Values.localnews.domain }}
   gateways:
   - {{ .Values.newsfrontend.name }}
   http:

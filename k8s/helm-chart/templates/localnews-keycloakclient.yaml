@@ -1,0 +1,34 @@
+{{ if eq .Values.localnews.sso.enabled "on" }}
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: localnews-client
+  namespace: {{ .Release.Namespace }}-{{ .Values.localnews.sso.namespacepostfix }}
+  labels:
+    app: sso
+spec:
+  realmSelector:
+     matchLabels:
+      app: sso
+  client:
+    clientId: localnews
+    secret: {{ .Values.localnews.sso.client.secret }}
+    standardFlowEnabled: true
+    defaultClientScopes: 
+      - email
+      - profile
+      - openid
+    protocolMappers:
+      - id: 3c89eb6c-d361-4eeb-a15c-6452d492dd25
+        name: audienceMapper
+        protocol: openid-connect
+        protocolMapper: oidc-audience-mapper
+        consentRequired: false
+        config:
+          "included.client.audience": "localnews"
+          "id.token.claim": "false"
+          "access.token.claim": "true"
+          "included.custom.audience": "localnews"   
+    redirectUris: 
+      - http://{{ .Values.newsfrontend.name }}-{{ .Release.Namespace }}.apps.{{ .Values.localnews.domain }}/*
+{{ end }}
