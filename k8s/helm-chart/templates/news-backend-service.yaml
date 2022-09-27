@@ -12,7 +12,11 @@ spec:
   ports:
     - name: http
       port: {{ .Values.newsbackend.ports.servicePort }}
+      {{ if eq .Values.localnews.sso.enabled "on" }}
+      targetPort: 4180 
+      {{ else }}
       targetPort: {{ .Values.newsbackend.ports.containerPort }}
+      {{ end }}
       {{ if eq .Values.newsfrontend.backendConnection "viaNodePort" }}
       nodePort: {{ .Values.newsbackend.ports.nodePort }}
       {{ end }}
