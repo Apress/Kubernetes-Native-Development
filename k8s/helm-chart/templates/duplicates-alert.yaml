@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: duplicates-alert
+spec:
+  groups:
+  - name: news-backend
+    rules:
+    - alert: TooManyDuplicatesAlert
+      expr: application_duplicateFeeds > 50
+      annotations:
+        summary: Too many duplicates detected
+          
