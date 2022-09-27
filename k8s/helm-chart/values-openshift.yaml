@@ -10,6 +10,9 @@ localnews:
     controlplane:
       name: "basic"
       namespace: "istio-system"
+    dataplane:
+      mtls: 
+        strict: "off"
   userworkloadmonitoring: "off"
 feedscraper:
   deployment: "on"

@@ -1,0 +1,16 @@
+{{ if eq .Values.localnews.mesh.dataplane.mtls.strict "on" }}
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+spec:
+  #host: "*.{{ .Release.Namespace }}.svc.cluster.local"
+  #workloadSelector:
+  #  matchLabels:
+  #    app: ratings
+  #trafficPolicy:
+  # tls:
+  #  mode: ISTIO_MUTUAL
+  mtls:
+    mode: STRICT
+{{ end }}
