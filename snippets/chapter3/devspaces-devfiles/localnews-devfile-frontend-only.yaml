@@ -8,8 +8,6 @@ projects:
       location: 'https://github.com/Apress/Kubernetes-Native-Development'
 components:
 ### news-frontend
-  - type: chePlugin
-    id: ms-vscode/node-debug2/latest
   - type: dockerimage
     alias: nodejs
     image: 'quay.io/eclipse/che-nodejs12-community@sha256:339af099e40f4049f9d77ad4a036143dd2d001e783b6fcd9da0edeae417ec355'
