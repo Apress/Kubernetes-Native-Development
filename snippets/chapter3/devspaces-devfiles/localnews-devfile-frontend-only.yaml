@@ -20,6 +20,9 @@ components:
           discoverable: 'true'
           public: 'true'
     mountSources: true
+    volumes:
+      - name: npm
+        containerPath: /home/user/.npm
 commands:
 ### news-frontend
   - name: Download dependencies & Start news-frontend in devmode
