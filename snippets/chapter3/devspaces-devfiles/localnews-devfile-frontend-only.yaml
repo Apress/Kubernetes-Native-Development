@@ -11,7 +11,7 @@ components:
 ### news-frontend
   - type: dockerimage
     alias: nodejs
-    image: 'registry.redhat.io/devspaces/udi-rhel8@sha256:d55549aad15742f6f7310da0c7abc1e65dd5d3ad2e3efb8fbf414cf91b9efac7'
+    image: 'registry.redhat.io/devspaces/udi-rhel8@sha256:1983e5c5273f4b8db0a7a5769d35d290eabdedafc300ac150828c031ffb79254'
     memoryLimit: 2048Mi
     endpoints:
       - name: news-frontend
