@@ -49,5 +49,5 @@ commands:
            helm upgrade -i localnews k8s/helm-chart -f k8s/helm-chart/values-openshift.yaml \
            --set newsfrontend.deployment=”off” \
            --set newsfrontend.service=”off” \
-           --set localnews.domain="$DEVWORKSPACE_ID-$CLUSTER_DOMAIN"
+           --set localnews.domain="$DEVWORKSPACE_ID.$CLUSTER_DOMAIN"
         workdir: '${PROJECTS_ROOT}/localnews/'
