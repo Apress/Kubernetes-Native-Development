@@ -6,13 +6,12 @@ projects:
     source:
       type: git
       location: 'https://github.com/Apress/Kubernetes-Native-Development'
+      branch: openshift
 components:
 ### news-frontend
-  - type: chePlugin
-    id: ms-vscode/node-debug2/latest
   - type: dockerimage
     alias: nodejs
-    image: 'quay.io/eclipse/che-nodejs12-community@sha256:339af099e40f4049f9d77ad4a036143dd2d001e783b6fcd9da0edeae417ec355'
+    image: 'registry.redhat.io/devspaces/udi-rhel8@sha256:1983e5c5273f4b8db0a7a5769d35d290eabdedafc300ac150828c031ffb79254'
     memoryLimit: 2048Mi
     endpoints:
       - name: news-frontend
@@ -21,6 +20,9 @@ components:
           discoverable: 'true'
           public: 'true'
     mountSources: true
+    volumes:
+      - name: npm
+        containerPath: /home/user/.npm
 commands:
 ### news-frontend
   - name: Download dependencies & Start news-frontend in devmode
@@ -38,3 +40,14 @@ commands:
         component: nodejs
         command: node_modules/@angular/cli/bin/ng serve --host 0.0.0.0 --port 4200 --disable-host-check
         workdir: '${CHE_PROJECTS_ROOT}/localnews/components/news-frontend'
+  - name: Install all Backend Services
+    actions:
+      - type: exec
+        component: nodejs
+        command: |
+           export CLUSTER_DOMAIN=$(echo $CHE_DASHBOARD_URL | sed 's/https:\/\/devspaces.//')
+           helm upgrade -i localnews k8s/helm-chart -f k8s/helm-chart/values-openshift.yaml \
+           --set newsfrontend.deployment=”off” \
+           --set newsfrontend.service=”off” \
+           --set localnews.domain="$DEVWORKSPACE_ID.$CLUSTER_DOMAIN"
+        workdir: '${PROJECTS_ROOT}/localnews/'
