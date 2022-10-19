@@ -10,6 +10,6 @@ spec:
       containers:
       - image: curlimages/curl
         command: [ "/bin/sh", "-c", "--" ]
-        args: [ "curl -s -f --connect-timeout 5 http://webserver.default.svc.cluster.local"]
+        args: [ "curl -s -f --connect-timeout 5 http://webserver.mdargatz-intro.svc.cluster.local"]
         name: curl
       restartPolicy: Never

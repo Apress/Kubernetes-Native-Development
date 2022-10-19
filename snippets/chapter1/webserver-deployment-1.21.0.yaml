@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: webserver
-        image: nginx:1.21.0
+        image: nginxinc/nginx-unprivileged:1.22
         ports:
-        - containerPort: 80
+        - containerPort: 8080

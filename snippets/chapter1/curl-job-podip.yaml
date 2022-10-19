@@ -10,6 +10,6 @@ spec:
       containers:
       - image: curlimages/curl
         command: [ "/bin/sh", "-c", "--" ]
-        args: [ "curl -s -f --connect-timeout 5 http://172.17.0.6"]
+        args: [ "curl -s -f --connect-timeout 5 http://10.129.2.173:8080"]
         name: curl
       restartPolicy: Never

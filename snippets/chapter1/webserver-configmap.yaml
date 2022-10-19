@@ -5,12 +5,12 @@ metadata:
 data:
   404.html: |
     <html>
-    	<body>This page cannot be found</body>
+    	<body>This page cannot be found, guys!</body>
     </html>
   my.conf: |
     server {
-      listen       80;
-      listen  [::]:80;
+      listen       8080;
+      listen  [::]:8080;
       server_name  localhost;
 
       location / {

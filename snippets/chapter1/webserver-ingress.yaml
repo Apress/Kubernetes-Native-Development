@@ -4,7 +4,7 @@ metadata:
   name: webserver-ingress
 spec:
   rules:
-    - host: webserver.192.168.49.2.nip.io
+    - host: webserver.apps.ocp4.stormshift.coe.muc.redhat.com
       http:
         paths:
           - path: /

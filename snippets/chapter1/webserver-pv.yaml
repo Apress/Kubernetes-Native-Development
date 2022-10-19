@@ -5,7 +5,7 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: manual
+  storageClassName: ocs-storagecluster-cephfs
   capacity:
     storage: 100Mi
   accessModes:
