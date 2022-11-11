@@ -1,0 +1,32 @@
+{{ if eq .Values.localnews.servicemesh "on" }}
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .Values.locationextractor.name }}
+spec:
+  hosts:
+  - {{ .Values.locationextractor.name }}
+  http:
+  - route:
+    - destination:
+        host: {{ .Values.locationextractor.name }}
+        subset: v1
+  {{ if ne .Values.localnews.mesh.locationExtractorSecondVersion.name "off" }}
+    {{ if eq .Values.localnews.mesh.locationExtractorSecondVersion.type "50/50" }}
+      weight: 50
+    - destination:
+        host: {{ .Values.locationextractor.name }}
+        subset: {{ .Values.localnews.mesh.locationExtractorSecondVersion.name }}
+      weight: 50
+    {{ end }}
+    {{ if eq .Values.localnews.mesh.locationExtractorSecondVersion.type "mirror" }}
+      weight: 100
+    mirror:
+      host: {{ .Values.locationextractor.name }}
+      subset: {{ .Values.localnews.mesh.locationExtractorSecondVersion.name }}
+    mirrorPercentage:
+      value: 100.0
+    {{ end }}
+  {{ end }}
+{{ end }}

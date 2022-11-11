@@ -13,12 +13,15 @@ localnews:
     dataplane:
       mtls: 
         strict: "off"
+    locationExtractorSecondVersion:
+      name: "off" # Set "off" for not deploying a 2nd version or "v2-worse-performance"
+      type: "50/50" # Option: 50/50, mirror
   sso:
     enabled: "off"
     namespacepostfix: "sso"
     client:
       secret: "ZHNnc0RHJT9zZGc/c0VUCg==" 
-  userworkloadmonitoring: "off"
+  workloadmonitoring: "off" # Currently only implemented for news-backend and location-extractor
 feedscraper:
   deployment: "on"
   name: feed-scraper
