@@ -4,7 +4,7 @@ metadata:
   name: mng-feedscaper-rolebinding
 subjects:
 - kind: ServiceAccount
-  namespace: attempt4
+  namespace: mdargatz-localnews
   name: controller-sa
 roleRef:
   kind: ClusterRole

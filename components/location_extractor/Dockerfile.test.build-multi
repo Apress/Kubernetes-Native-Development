@@ -1,0 +1,25 @@
+###
+## build environment and download dependencies inside a venv
+###
+FROM docker.io/python:3.9 as build
+
+WORKDIR /app
+RUN python -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt && python3 -m spacy download en_core_web_md
+
+###
+## start python flask app with gunicorn with the copied venv
+###
+FROM docker.io/python:3.9 as deploy
+
+WORKDIR /app
+
+COPY --from=build /app/venv ./venv
+COPY ./src /app/src
+
+ENV PATH="/app/venv/bin:$PATH"
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "src.wsgi:app" ]

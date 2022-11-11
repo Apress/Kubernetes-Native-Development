@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: news-backend-simple-pipe-run-
+  namespace: localnews-pipelines
+  labels:
+    tekton.dev/pipeline: news-backend-simple-pipe
+spec:
+  params:
+    - name: component
+      value: news-backend
+    - name: gitrepositoryurl
+      value: 'git@github.com:Apress/Kubernetes-Native-Development.git'
+    - name: gitrevision
+      value: openshift
+    - name: image_repo
+      value: docker.io/maxisses
+    - name: image_version
+      value: testest
+    - name: target_namespace
+      value: newsbackend-integration
+    - name: helm_values_file
+      value: values-openshift.yaml
+  pipelineRef:
+    name: news-backend-simple-pipe
+  serviceAccountName: pipeline
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+    - emptyDir: {}
+      name: maven-settings

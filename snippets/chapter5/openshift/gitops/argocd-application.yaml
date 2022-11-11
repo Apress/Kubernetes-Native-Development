@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: localnews
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Apress/Kubernetes-Native-Development.git'
+    path: k8s/helm-chart
+    targetRevision: openshift
+    helm:
+      valueFiles:
+        - values-openshift.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: newsbackend-integration-gitops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

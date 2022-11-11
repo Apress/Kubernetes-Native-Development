@@ -1,0 +1,18 @@
+# Git repositories configure Argo CD with (optional).
+apiVersion: v1
+kind: Secret
+metadata:
+  name: localnewsrepo
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: git@github.com:Apress/Kubernetes-Native-Development.git
+  ### key is just for demonstration purpose and deactivated
+  sshPrivateKey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACA7hHs953h9uVBjiOVu4EFMEVgFqn3BgGUmywYeO4hBfwAAAJCa73xqmu98
+    agAAAAtzc2gtZWQyNTUxOQAAACA7hHs953h9uVBjiOVu4EFMEVgFqn3BgGUmywYeO4hBfw
+    AAAEANUzaWEHprNHJpte7Zir/FdDXonlbA9nT7KZWUUXnYOjuEez3neH25UGOI5W7gQUwR
+    WAWqfcGAZSbLBh47iEF/AAAADG9jcEB0ZXN0LmNvbQE=
+    -----END OPENSSH PRIVATE KEY-----

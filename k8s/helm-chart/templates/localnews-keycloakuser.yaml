@@ -1,0 +1,24 @@
+{{ if eq .Values.localnews.sso.enabled "on" }}
+kind: KeycloakUser
+apiVersion: keycloak.org/v1alpha1
+metadata:
+  name: localnews-testuser
+  namespace: {{ .Release.Namespace }}-{{ .Values.localnews.sso.namespacepostfix }}
+  labels:
+    app: sso
+  namespace: bschmeli-localnews-sso
+spec:
+  user:
+    username: test
+    firstName: John
+    lastName: Doe
+    email: user@example.com
+    enabled: true
+    emailVerified: true 
+    credentials:
+      - type: "password"
+        value: "test"
+  realmSelector:
+    matchLabels:
+      app: sso
+{{ end }}

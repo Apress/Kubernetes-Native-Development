@@ -2,9 +2,18 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: localnews-operator-sub
-  namespace: operators
+  namespace: openshift-gitops
 spec:
   channel: alpha
   name: news-operator-helm 
   source: localnews-catalog 
-  sourceNamespace: operators
+  sourceNamespace: openshift-gitops
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: localnews
+  namespace: openshift-gitops
+spec:
+  targetNamespaces:
+    - openshift-gitops

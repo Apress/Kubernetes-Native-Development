@@ -1,0 +1,231 @@
+apiVersion: 1.0.0
+metadata:
+  name: localnews
+projects:
+  - name: localnews
+    source:
+      type: git
+      location: 'https://github.com/Apress/Kubernetes-Native-Development'
+components:
+####
+  - type: dockerimage
+    alias: ubi-minimal
+    image: 'registry.access.redhat.com/ubi8/ubi-minimal'
+    memoryLimit: 32M
+    mountSources: true
+    endpoints:
+      - name: 'eighty-eighty-native'
+        port: 6060
+    command: ['tail']
+    args: ['-f', '/dev/null']
+### location-extractor
+  - type: chePlugin
+    id: ms-python/python/latest
+    preferences:
+      python.globalModuleInstallation: true
+  - type: dockerimage
+    alias: location-extractor
+    image: 'quay.io/eclipse/che-python-3.8@sha256:669ad45cf20916281fa52dfee78b760124517e1e8b4cee31695d7a12b1ae17cd'
+    memoryLimit: 2048Mi
+    mountSources: true
+    endpoints:
+      - attributes:
+          discoverable: 'true'
+          public: 'false'
+        name: location-extractor
+        port: 5000
+### news-backend
+  - type: chePlugin
+    id: redhat/quarkus-java11/latest
+  - type: dockerimage
+    alias: news-backend
+    image: 'quay.io/eclipse/che-quarkus@sha256:2d5a5a5587a60636d9c3a7fc20958cea67429096b5fced79a54d0224ced05200'
+    env:
+      - name: backend.nlp.url
+        value: http://location-extractor:5000/get_loc
+      - name: quarkus.datasource.jdbc.url
+        value: jdbc:postgresql://postgis:5432/news?user=postgres&password=banane
+      - name: JAVA_OPTS
+        value: '-XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xms20m -Djava.security.egd=file:/dev/./urandom -Duser.home=/home/jboss'
+      - name: MAVEN_OPTS
+        value: $(JAVA_OPTS)
+    memoryLimit: 2048Mi
+    mountSources: true
+    volumes:
+      - name: m2
+        containerPath: /home/jboss/.m2
+    endpoints:
+      - name: quarkus-development-server
+        port: 8080
+      - attributes:
+          path: /news
+          discoverable: 'true'
+          public: 'true'
+        name: news-backend
+        port: 8080
+      - attributes:
+          public: 'false'
+        name: debug
+        port: 5005
+      - attributes:
+          public: 'false'
+        name: tests
+        port: 8081
+### postgis
+  - endpoints:
+      - attributes:
+          discoverable: 'true'
+          public: 'false'
+        name: postgis
+        port: 5432
+    memoryLimit: 1024Mi
+    volumes:
+      - name: postgresql-data
+        containerPath: /var/lib/postgresql/data
+    type: dockerimage
+    alias: postgis
+    image: 'postgis/postgis:12-master'
+    env:
+      - name: PGDATA 
+        value: /tmp/pgdata
+      - value: postgres
+        name: POSTGRES_USER
+      - value: banane
+        name: POSTGRES_PASSWORD
+      - value: news
+        name: POSTGRES_DB
+### feed-scraper
+  - type: chePlugin
+    id: redhat/java11/latest
+    preferences:
+      java.server.launchMode: Standard
+  - type: chePlugin
+    id: redhat/dependency-analytics/latest
+  - type: dockerimage
+    alias: feed-scraper
+    image: 'quay.io/eclipse/che-java11-maven@sha256:cde80d5d65a585adff5542fbfe356a6d81021d84bf7d5ced60aa0bbd8e306bf5'
+    env:
+      - name: JAVA_OPTS
+        value: '-XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xms20m -Djava.security.egd=file:/dev/./urandom -Duser.home=/home/jboss'
+      - name: MAVEN_OPTS
+        value: $(JAVA_OPTS)
+    memoryLimit: 512Mi
+    mountSources: true
+    volumes:
+      - name: m2
+        containerPath: /home/jboss/.m2
+### news-frontend
+  - type: dockerimage
+    alias: nodejs
+    image: 'quay.io/eclipse/che-nodejs12-community@sha256:339af099e40f4049f9d77ad4a036143dd2d001e783b6fcd9da0edeae417ec355'
+    memoryLimit: 2048Mi
+    endpoints:
+      - name: frontend
+        port: 4200
+        attributes:
+          discoverable: 'true'
+          public: 'true'
+    mountSources: true
+commands:
+### location-extractor
+  - name: Run location-extractor in devmode
+    actions:
+      - type: exec
+        component: location-extractor
+        command: |
+          pip install -r requirements.txt
+          python -m spacy download en_core_web_md 
+          python src/server.py
+        workdir: '${CHE_PROJECTS_ROOT}/localnews/components/location_extractor'
+### news-backend
+  - name: Run news-backend in devmode 
+    actions:
+      - type: exec
+        component: news-backend
+        command: "mvn compile quarkus:dev"
+        workdir: '${CHE_PROJECTS_ROOT}/localnews/components/news-backend'
+  - name: Create news via curl to test news-backend
+    actions:
+      - workdir: '${CHE_PROJECTS_ROOT}/localnews/components/news-backend'
+        type: exec
+        command: 'curl -i -H "Content-Type: application/json" -d @src/test/resources/news.json news-backend:8080/news'
+        component: news-backend
+  - name: Attach remote debugger Java
+    actions:
+      - type: vscode-launch
+        referenceContent: |
+          {
+            "version": "0.2.0",
+            "configurations": [
+              {
+                "type": "java",
+                "request": "attach",
+                "name": "Attach to Remote Quarkus App",
+                "hostName": "localhost",
+                "port": 5005
+              }
+            ]
+          }
+### feed-scraper
+  - name: Build & Run feed-scraper
+    actions:
+      - type: exec
+        component: feed-scraper
+        command: |
+          mvn clean install
+          mvn exec:java -Dscraper.feeds.url=http://feeds.bbci.co.uk/news/world/rss.xml -Dscraper.feed.backend.host=news-backend -Dexec.mainClass="com.apress.kubdev.rss.Application"
+        workdir: '${CHE_PROJECTS_ROOT}/localnews/components/feed-scraper'
+  - name: Run feed-scraper
+    actions:
+      - type: exec
+        component: feed-scraper
+        command: |
+          mvn exec:java -Dscraper.feeds.url=http://feeds.bbci.co.uk/news/world/rss.xml -Dscraper.feed.backend.host=news-backend -Dexec.mainClass="com.apress.kubdev.rss.Application"
+        workdir: '${CHE_PROJECTS_ROOT}/localnews/components/feed-scraper'
+  - name: Debug remote java application
+    actions:
+      - referenceContent: |
+          {
+           "version": "0.2.0",
+           "configurations": [
+             {
+               "type": "java",
+               "name": "Debug (Attach) - Remote",
+               "request": "attach",
+               "hostName": "localhost",
+               "port": 5005
+             }]
+           }
+        type: vscode-launch
+### news-frontend
+  - name: Download dependencies & Start news-frontend in devmode
+    actions:
+      - type: exec
+        component: nodejs
+        command: |
+          npm install
+          npm install @angular/cli
+          node_modules/@angular/cli/bin/ng serve --host 0.0.0.0 --port 4200 --disable-host-check
+        workdir: '${CHE_PROJECTS_ROOT}/localnews/components/news-frontend'
+  - name: Start news-frontend in devmode
+    actions:
+      - type: exec
+        component: nodejs
+        command: node_modules/@angular/cli/bin/ng serve --host 0.0.0.0 --port 4200 --disable-host-check
+        workdir: '${CHE_PROJECTS_ROOT}/localnews/components/news-frontend'
+### postgis  
+  - name: psql
+    actions:
+      - type: exec
+        command: psql -d news -U postgres
+        component: postgis
+  - name: Delete news
+    actions:
+      - type: exec
+        component: postgis
+        command: psql -U postgres -d news -c 'delete from news;'
+  - name: Show news
+    actions:
+      - type: exec
+        component: postgis
+        command: psql -U postgres -d news -c 'select * from news;'

@@ -1,0 +1,44 @@
+apiVersion: 1.0.0
+metadata:
+  name: localnews-frontend-all
+projects:
+  - name: localnews
+    source:
+      type: git
+      location: 'https://github.com/Apress/Kubernetes-Native-Development'
+### all components except news-frontend
+  - alias: location-extractor
+    type: kubernetes
+    reference: https://raw.githubusercontent.com/maxisses/localnews-k8s-manifests/main/helmaslist.yaml
+components:
+### news-frontend
+  - type: chePlugin
+    id: ms-vscode/node-debug2/latest
+  - type: dockerimage
+    alias: nodejs
+    image: 'quay.io/eclipse/che-nodejs12-community@sha256:339af099e40f4049f9d77ad4a036143dd2d001e783b6fcd9da0edeae417ec355'
+    memoryLimit: 2048Mi
+    endpoints:
+      - name: news-frontend
+        port: 4200
+        attributes:
+          discoverable: 'true'
+          public: 'true'
+    mountSources: true
+commands:
+### news-frontend
+  - name: Download dependencies & Start news-frontend in devmode
+    actions:
+      - type: exec
+        component: nodejs
+        command: |
+          npm install
+          npm install @angular/cli
+          node_modules/@angular/cli/bin/ng serve --host 0.0.0.0 --port 4200 --disable-host-check
+        workdir: '${CHE_PROJECTS_ROOT}/localnews/components/news-frontend'
+  - name: Start news-frontend in devmode
+    actions:
+      - type: exec
+        component: nodejs
+        command: node_modules/@angular/cli/bin/ng serve --host 0.0.0.0 --port 4200 --disable-host-check
+        workdir: '${CHE_PROJECTS_ROOT}/localnews/components/news-frontend'

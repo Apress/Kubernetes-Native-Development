@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: myapp
+  namespace: openshift-gitops
+spec:
+  generators:
+    - clusterDecisionResource:
+        configMapRef: acm-placement
+        labelSelector:
+          matchLabels:
+            cluster.open-cluster-management.io/placement: myapp-placement
+        requeueAfterSeconds: 60
+  template:
+    metadata:
+      name: myapp-{{name}}
+      labels:
+        velero.io/exclude-from-backup: "true"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Apress/Kubernetes-Native-Development.git
+        targetRevision: openshift
+        path: k8s/helm-chart
+        helm:
+          valueFiles:
+            - values-openshift.yaml
+      destination:
+        namespace: localnews
+        server: "{{server}}"
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: myapp-placement
+  namespace: openshift-gitops
+spec:
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: cloud
+              operator: In
+              values:
+                - IBM
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: acm-placement
+#   namespace: openshift-gitops
+# data:
+#   apiVersion: apps.open-cluster-management.io/v1
+#   kind: placementrules
+#   statusListKey: clusters
+#   matchKey: local-cluster

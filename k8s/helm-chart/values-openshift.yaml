@@ -1,0 +1,109 @@
+# Default values for helm-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+localnews:
+  imagePullPolicy: Always
+  domain: your-cluster.domain ## take it from your browser, usually looks something like apps.ocp4.stormshift.coe.muc.redhat.com
+  servicemesh: "off"
+  mesh:
+    controlplane:
+      name: "basic"
+      namespace: "istio-system"
+    dataplane:
+      mtls: 
+        strict: "off"
+    locationExtractorSecondVersion:
+      name: "off" # Set "off" for not deploying a 2nd version or "v2-worse-performance"
+      type: "50/50" # Option: 50/50, mirror
+  sso:
+    enabled: "off"
+    namespacepostfix: "sso"
+    client:
+      secret: "ZHNnc0RHJT9zZGc/c0VUCg==" 
+  workloadmonitoring: "off" # Currently only implemented for news-backend and location-extractor
+feedscraper:
+  deployment: "on"
+  name: feed-scraper
+  replicaCount: 1
+  image: quay.io/k8snativedev/feed-scraper
+  imageTag: openshift
+  envVars:
+    feeds:
+      key: SCRAPER_FEEDS_URL
+      value: http://feeds.bbci.co.uk/news/world/rss.xml, https://www.aljazeera.com/xml/rss/all.xml, https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml, http://rss.cnn.com/rss/edition_world.rss, https://timesofindia.indiatimes.com/rssfeeds/296589292.cms, https://www.cnbc.com/id/100727362/device/rss/rss.html 
+    backend:
+      key: SCRAPER_FEED_BACKEND_HOST
+      value: news-backend
+newsbackend:
+  deployment: "on"
+  service: "on"
+  name: news-backend
+  replicaCount: 1
+  image: quay.io/k8snativedev/news-backend
+  imageTag: openshift
+  ports:
+    containerPort: 8080
+    servicePort: 8080
+    nodePort: 30000
+  envVars:
+    backendNlpUrl:
+      key: backend.nlp.url
+      valueHost: "http://location-extractor"
+      valueEndpoint: /get_loc
+    jdbcUrl:
+      key: quarkus.datasource.jdbc.url
+      value: jdbc:postgresql://postgis:5400/news?user=postgres&password=banane
+postgis:
+  name: postgis
+  replicaCount: 1
+  image: postgis/postgis:12-master
+  ports:
+    containerPort: 5432
+    servicePort: 5400
+  envVars:
+    PGDATA:
+      key: PGDATA
+      value: /tmp/pgdata
+    POSTGRES_DB:
+      key: POSTGRES_DB
+      value: news
+    POSTGRES_PASSWORD:
+      key: POSTGRES_PASSWORD
+      value: banane
+    POSTGRES_USER:
+      key: POSTGRES_USER
+      value: postgres
+locationextractor:
+  deployment: "on"
+  service: "on"
+  name: location-extractor
+  replicaCount: 1
+  image: quay.io/k8snativedev/location_extractor
+  imageTag: openshift
+  ports:
+    containerPort: 5000
+    servicePort: 8081
+newsfrontend:
+  deployment: "on"
+  service: "on"
+  name: news-frontend
+  replicaCount: 1
+  image: quay.io/k8snativedev/news-frontend
+  imageTag: openshift
+  ports:
+    containerPort: 8080
+    servicePort: 80
+    nodePort: 31111
+  backendConnection: "viaIngress" # alternative is viaNodePort
+  envVars:
+    backend:
+      prefix:
+        key: PREFIX
+        value: "http://"
+      ip:
+        key: NODE_IP
+        value: # with "viaNodePort" no value needs to be set because ip is retrieved from kubernetes api"
+      nodePort:
+        key: NODE_PORT
+        value: 80 # with "viaNodePort" no value needs to be set because nodePort is specified in the news-backend Service"

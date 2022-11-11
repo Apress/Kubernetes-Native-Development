@@ -1,7 +1,7 @@
 apiVersion: kubdev.apress.com/v1
 kind: FeedAnalysis
 metadata:
-  name: my-feed
+  name: my-feed-aljazeera
 spec:
   urls: 
-    - https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml
+    - https://www.aljazeera.com/xml/rss/all.xml

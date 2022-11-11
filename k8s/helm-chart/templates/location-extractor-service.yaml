@@ -9,6 +9,7 @@ spec:
   ports:
     - port: {{ .Values.locationextractor.ports.servicePort }}
       targetPort: {{ .Values.locationextractor.ports.containerPort }}
+      name: http
   selector:
     app: {{ .Values.locationextractor.name }}
 {{ end }}

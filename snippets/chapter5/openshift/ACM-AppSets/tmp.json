@@ -1,0 +1,68 @@
+{
+    "apiVersion": "v1",
+    "kind": "Namespace",
+    "metadata": {
+        "annotations": {
+            "openshift.io/description": "",
+            "openshift.io/display-name": "",
+            "openshift.io/requester": "IAM#max_dargatz@hotmail.com",
+            "openshift.io/sa.scc.mcs": "s0:c26,c20",
+            "openshift.io/sa.scc.supplemental-groups": "1000690000/10000",
+            "openshift.io/sa.scc.uid-range": "1000690000/10000",
+            "operator.tekton.dev/prune.hash": "e12cf88878007ab90299fa28c92d42daf72a1dda6ff604ea40c1f1da0f1f5e1d"
+        },
+        "creationTimestamp": "2022-06-27T12:04:59Z",
+        "deletionTimestamp": "2022-08-15T08:39:41Z",
+        "labels": {
+            "kubernetes.io/metadata.name": "bschmeli-devspaces",
+            "openshift-pipelines.tekton.dev/namespace-reconcile-version": "1.7.1"
+        },
+        "name": "bschmeli-devspaces",
+        "resourceVersion": "274795165",
+        "uid": "6659c8c2-acd6-44fc-9d73-cc8046226da7"
+    },
+    "spec": {
+        "finalizers": [
+        ]
+    },
+    "status": {
+        "conditions": [
+            {
+                "lastTransitionTime": "2022-08-15T08:39:46Z",
+                "message": "Discovery failed for some groups, 3 failing: unable to retrieve the complete list of server APIs: clusterview.open-cluster-management.io/v1: the server is currently unable to handle the request, clusterview.open-cluster-management.io/v1alpha1: the server is currently unable to handle the request, proxy.open-cluster-management.io/v1beta1: the server is currently unable to handle the request",
+                "reason": "DiscoveryFailed",
+                "status": "True",
+                "type": "NamespaceDeletionDiscoveryFailure"
+            },
+            {
+                "lastTransitionTime": "2022-08-15T08:39:57Z",
+                "message": "All legacy kube types successfully parsed",
+                "reason": "ParsedGroupVersions",
+                "status": "False",
+                "type": "NamespaceDeletionGroupVersionParsingFailure"
+            },
+            {
+                "lastTransitionTime": "2022-08-15T08:40:28Z",
+                "message": "All content successfully deleted, may be waiting on finalization",
+                "reason": "ContentDeleted",
+                "status": "False",
+                "type": "NamespaceDeletionContentFailure"
+            },
+            {
+                "lastTransitionTime": "2022-08-15T08:39:57Z",
+                "message": "Some resources are remaining: checlusters.org.eclipse.che has 1 resource instances",
+                "reason": "SomeResourcesRemain",
+                "status": "True",
+                "type": "NamespaceContentRemaining"
+            },
+            {
+                "lastTransitionTime": "2022-08-15T08:39:57Z",
+                "message": "Some content in the namespace has finalizers remaining: cheGateway.clusterpermissions.finalizers.che.eclipse.org in 1 resource instances, cheWorkspaces.clusterpermissions.finalizers.che.eclipse.org in 1 resource instances, consolelink.finalizers.che.eclipse.org in 1 resource instances, dashboard.clusterpermissions.finalizers.che.eclipse.org in 1 resource instances, devWorkspace.permissions.finalizers.che.eclipse.org in 1 resource instances, namespaces-editor.permissions.finalizers.che.eclipse.org in 1 resource instances, oauthclients.finalizers.che.eclipse.org in 1 resource instances, openshift-oauth-user.finalizers.che.eclipse.org in 1 resource instances",
+                "reason": "SomeFinalizersRemain",
+                "status": "True",
+                "type": "NamespaceFinalizersRemaining"
+            }
+        ],
+        "phase": "Terminating"
+    }
+}

@@ -1,0 +1,29 @@
+# Stage 1: build the app
+FROM registry.access.redhat.com/ubi8/nodejs-14 AS builder
+
+WORKDIR /opt/app-root/src
+
+COPY package.json /opt/app-root/src
+RUN npm install
+COPY . /opt/app-root/src
+
+RUN ng build --configuration production
+
+# Stage 2: serve it with nginx
+FROM registry.access.redhat.com/ubi8/nginx-120 AS deploy
+
+WORKDIR /opt/app-root/src
+
+LABEL maintainer="Max Dargatz"
+
+COPY --from=builder /opt/app-root/src/dist/news-frontend .
+
+## customize for file permissions for rootless
+RUN chgrp -R 0 /opt/app-root/src/assets && \
+    chmod -R g=u /opt/app-root/src/assets
+
+USER 1001
+
+EXPOSE 8080
+
+CMD ["/bin/sh",  "-c",  "envsubst < /opt/app-root/src/assets/settings.template.json > /opt/app-root/src/assets/settings.json && exec nginx -g 'daemon off;'"]

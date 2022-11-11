@@ -1,0 +1,43 @@
+apiVersion: 1.0.0
+metadata:
+  name: localnews-test-locex
+projects:
+  - name: localnews
+    source:
+      type: git
+      location: 'https://github.com/Apress/Kubernetes-Native-Development'
+components:
+### location-extractor
+    - alias: location-extractor
+      type: kubernetes
+      reference: location-extractor-deployment.yaml
+      referenceContent: |
+        kind: List
+        apiVersion: v1
+        metadata:
+          name: app=localnews
+        items:
+          - apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: feed-scraper
+            spec:
+              replicas: 1
+              selector:
+                matchLabels:
+                  app: feed-scraper
+              template:
+                metadata:
+                  labels:
+                    app: feed-scraper
+                spec:
+                  containers:
+                    - command:
+                        - java
+                        - -Dscraper.feeds.url=http://feeds.bbci.co.uk/news/world/rss.xml
+                        - -Dscraper.feed.backend.host=news-backend
+                        - -jar
+                        - /usr/local/lib/feed-scraper.jar
+                      image: quay.io/k8snativedev/feed-scraper
+                      name: feed-scraper
+

@@ -1,0 +1,27 @@
+###
+## build environment and download dependencies inside a venv
+###
+FROM registry.access.redhat.com/ubi8/python-39 as build
+
+WORKDIR /opt/app-root/src
+RUN python -m venv /opt/app-root/src/venv
+ENV PATH="/opt/app-root/src/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt && python3 -m spacy download en_core_web_md
+
+###
+## start python flask app with gunicorn with the copied venv
+###
+FROM registry.access.redhat.com/ubi8/python-39
+
+WORKDIR /opt/app-root/src
+
+COPY --from=build /opt/app-root/src/venv ./venv
+COPY ./src /opt/app-root/src/src
+
+ENV PATH="/opt/app-root/src/venv/bin:$PATH"
+
+USER 1001
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "src.wsgi:app" ]

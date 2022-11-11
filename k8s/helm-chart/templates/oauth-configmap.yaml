@@ -1,0 +1,31 @@
+{{ if eq .Values.localnews.sso.enabled "on" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: oauth-config
+data:
+  oauth2-proxy.cfg: |+
+    http_address="0.0.0.0:4180"
+    cookie_secret="{{ .Values.localnews.sso.client.secret }}"
+    cookie_secure="false"
+    email_domains='*'
+    pass_authorization_header='true'
+    pass_access_token='true'
+  
+    set_authorization_header = true
+    ssl_insecure_skip_verify = true
+    ssl_upstream_insecure_skip_verify = true
+    
+    # the http url(s) of the upstream endpoint. If multiple, routing is based on path
+    upstreams = "http://127.0.0.1:8080/"
+    cookie_domains=[".apps.{{ .Values.localnews.domain }}"] # Required so cookie can be read on all subdomains.
+    whitelist_domains=[".apps.{{ .Values.localnews.domain }}"] # Required to allow redirection back to original requested target.
+    # keycloak provider
+    provider="keycloak-oidc"
+    provider_display_name="Keycloak"
+    client_secret="{{ .Values.localnews.sso.client.secret }}"
+    client_id="localnews"
+    oidc_issuer_url="https://keycloak-{{ .Release.Namespace }}-{{ .Values.localnews.sso.namespacepostfix }}.apps.{{ .Values.localnews.domain }}/auth/realms/localnews"
+    
+    redirect_url="http://{{ .Values.newsfrontend.name }}-{{ .Release.Namespace }}.apps.{{ .Values.localnews.domain }}"
+{{ end }}

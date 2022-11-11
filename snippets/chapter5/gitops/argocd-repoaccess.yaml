@@ -3,37 +3,16 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: localnewsrepo
-  namespace: argocd
   labels:
     argocd.argoproj.io/secret-type: repository
 stringData:
-  url: git@github.com:Apress/Kubernetes-Native-Development.git
+  url: git@github.com:sa-mw-dach/local-news-shift.git
   ### key is just for demonstration purpose and deactivated
   sshPrivateKey: |
-    -----BEGIN RSA PRIVATE KEY-----
-    MIIEogIBAAKCAQEA3lAZTyIMChxVW1eDws+Rk18bEPEgKXYcLNRt/lWNZuYqJfiN
-    qbp/jhtO7ppTv0S07twHtBDjUCpz0oXAWwjaeUvuTEYJV8mV4TsbNSgvQ4qgYlzi
-    LvY+kBU8iogu9Jtf1etOCduR2/Rias17kXHikcVHE3puSaG/DhiuPdKZVR3ZOC73
-    a32ot+Bgw9qiulcGr/wI1cIDBgwQBxULFWP6KPPG7jrIvEtSsKnzQLvtONfYrZ7l
-    wAV21t5U2++B2JWJ0zkSFIsgaD3ScD5SyE1NfnPcpjrK4uaarmXnbZOVu1sSmMw/
-    2jW5LC0zKe2feWXJovNFJv/Qssw6W4znqR3ykQIDAQABAoIBAGsBkP0W/UaMlsVN
-    nX1Sndaaq5N/DKUIVc16PqtyEIrb9KOsPLvaqfUDzf1pSTBCaPij7g1NJ6z5kiBe
-    AtWOsGI8GyqZd3vK6xqrcZAnlIBlJIfT/4btPfXqUua3YCqa8wkrprd1+YIu4oRX
-    /cdnUtApbenBP36vnR+y34Ogb++YdYhcTRjbkQMnJTOyexPcR+laP1FaZ8NJiPiA
-    Qlov1ydPaeVSeKHYZF8/7REgo5T+DOgGOXEhuBOPHXwGqOl6Eee8cCzEFlbjQYFC
-    Px1uPouTeQfhyTAg21njk00TOxPMKbrskAPJKOJnqx1NzAf11IJEZbM2S8dXBvxr
-    gNxE3AECgYEA+WORRDqWnkU7G9ZLlS12My6KElC3SnudbNq98LG7WqGnFbds4kmS
-    enTRxXgyZN7tP+oW57jF2YRF8YXRBuIG2EvbcpvWkxhAPLQ+ghVSTddyN5OOurPM
-    BwtQJMVEeAyBi5NIQXXdWH+zmCI0l2zPqyZi+G4Ea4iUukgGyN/6ZsECgYEA5DTI
-    5PxbqwurCVJawlmu9X7xwCZajyN2MNO590lfEhN2yPx3x7AwFRPn/CxsgZgXZP6/
-    h75c5KeYJOt3JktMZ2Nc8SSk2Q25O+BoLRZd4ocWpHxaK5UOnmyp7f0Fc4kWPACO
-    AjQQusIS3l81GMj6a+gX5mgrQoPgkMpTxSUaz9ECgYAdCstP9sKzi7xmcX470R+C
-    tli96UhvFBYxJwgXj5sR4uFiVgoIEClOuWv0Yxr7RDq8xrYEJjBkNFMw3TSKaKgD
-    aFIV9q/2UUypxRPCclkzV3OlpTlp5KZN67NZlN90W4B6kJxJg0BTngt8G/+j4rgM
-    ZlwAMk+xdiZbyyd/HRY8AQKBgE3COq3j22xl9mqfuDM/EeGu1rstlm/tmmk6y8Qa
-    KR3kqfYEKOBPBaM4/DQuAu8JnvcX4rVjRQ3YmXwDC79tquQTtGiqns0i4vonFfg/
-    BdCZTTrQ8HynNqr+xcxFCeV7UasyWTEhAo5QcNN6x4HhgYrhM7ubxRnOC+fqOS8U
-    3JTxAoGAfQ8o9ZZvWmSOfwknkh4WEBRzzKsqHRv63cn1+ujCrEmhTdjN+H5sB4yy
-    Y0qLegPFMrpC3w7bi7CFv02QqCn/0bSdnw6QNQdCSwuZwZUq8k6z0iSsrE3QDX1d
-    BQMRAs5OrEvuKmT93sM3vHJskaXbme0CTOWFw03mIuhF5BkChRw=
-    -----END RSA PRIVATE KEY-----
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACA7hHs953h9uVBjiOVu4EFMEVgFqn3BgGUmywYeO4hBfwAAAJCa73xqmu98
+    agAAAAtzc2gtZWQyNTUxOQAAACA7hHs953h9uVBjiOVu4EFMEVgFqn3BgGUmywYeO4hBfw
+    AAAEANUzaWEHprNHJpte7Zir/FdDXonlbA9nT7KZWUUXnYOjuEez3neH25UGOI5W7gQUwR
+    WAWqfcGAZSbLBh47iEF/AAAADG9jcEB0ZXN0LmNvbQE=
+    -----END OPENSSH PRIVATE KEY-----

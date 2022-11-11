@@ -1,0 +1,17 @@
+{{ if eq .Values.localnews.workloadmonitoring "on" }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: location-extractor-monitor
+  name: location-extractor-monitor
+spec:
+  endpoints:
+  - interval: 30s
+    path: /metrics
+    port: http
+    scheme: http
+  selector:
+    matchLabels:
+      app: {{ .Values.locationextractor.name }}
+{{ end }}
