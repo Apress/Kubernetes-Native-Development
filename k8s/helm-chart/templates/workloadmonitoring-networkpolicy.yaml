@@ -1,0 +1,20 @@
+{{ if eq .Values.localnews.workloadmonitoring "on" }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+  name: workloadmonitoringaccess
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-user-workload-monitoring
+  - to:
+    ports:
+    - protocol: TCP
+      port: 8080
+  podSelector: {}
+  policyTypes:
+  - Ingress
+{{ end }}

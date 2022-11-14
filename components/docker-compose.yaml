@@ -4,7 +4,7 @@ services:
         image: quay.io/k8snativedev/news-frontend
         restart: always
         environment:
-          - NODE_IP=192.168.99.100
+          - NODE_IP=localhost
           - NODE_PORT=8080        
         ports:
           - 4200:80

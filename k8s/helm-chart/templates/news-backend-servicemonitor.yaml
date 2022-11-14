@@ -1,0 +1,17 @@
+{{ if eq .Values.localnews.workloadmonitoring "on" }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: news-backend-monitor
+  name: news-backend-monitor
+spec:
+  endpoints:
+  - interval: 30s
+    path: /q/metrics
+    port: http
+    scheme: http
+  selector:
+    matchLabels:
+      app: {{ .Values.newsbackend.name }}
+{{ end }}

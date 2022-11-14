@@ -1,0 +1,38 @@
+
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: location-extractor
+  namespace: localnews-demo
+  generation: 1
+  labels:
+    kiali_wizard: traffic_shifting
+spec:
+  host: location-extractor
+  subsets:
+    - name: v1
+      labels:
+        version: v1
+    - name: v2
+      labels:
+        version: v2
+status: {}
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: location-extractor-mirror
+spec:
+  hosts:
+    - location-extractor
+  http:
+    - route:
+        - destination:
+            host: location-extractor
+            subset: v1
+          weight: 100
+      mirror:
+        host: location-extractor
+        subset: v2
+      mirrorPercentage:
+        value: 100

@@ -10,7 +10,8 @@ spec:
   type: NodePort
   {{ end }}
   ports:
-    - port: {{ .Values.newsbackend.ports.servicePort }}
+    - name: http
+      port: {{ .Values.newsbackend.ports.servicePort }}
       targetPort: {{ .Values.newsbackend.ports.containerPort }}
       {{ if eq .Values.newsfrontend.backendConnection "viaNodePort" }}
       nodePort: {{ .Values.newsbackend.ports.nodePort }}

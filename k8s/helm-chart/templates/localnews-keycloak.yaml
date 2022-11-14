@@ -1,0 +1,13 @@
+{{ if eq .Values.localnews.sso.enabled "on" }}
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: localnews-sso
+  namespace: {{ .Release.Namespace }}-{{ .Values.localnews.sso.namespacepostfix }}
+  labels:
+    app: sso
+spec:
+  externalAccess:
+    enabled: true
+  instances: 1
+{{ end }}

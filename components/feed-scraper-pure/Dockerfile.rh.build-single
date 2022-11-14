@@ -1,3 +1,0 @@
-FROM registry.access.redhat.com/ubi8/openjdk-11-runtime
-COPY target/feed-scraper-jar-with-dependencies.jar /usr/local/lib/feed-scraper.jar
-ENTRYPOINT ["java","-jar","/usr/local/lib/feed-scraper.jar"]

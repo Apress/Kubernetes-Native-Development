@@ -1,0 +1,12 @@
+{{ if eq .Values.localnews.servicemesh "on" }}
+apiVersion: maistra.io/v1
+kind: ServiceMeshMember
+metadata:
+  name: default
+  annotations:
+    "helm.sh/hook": pre-install
+spec:
+  controlPlaneRef:
+    name: {{ .Values.localnews.mesh.controlplane.name }}
+    namespace: {{ .Values.localnews.mesh.controlplane.namespace }}
+{{ end }}

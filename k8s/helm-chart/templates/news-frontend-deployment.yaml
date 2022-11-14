@@ -14,8 +14,26 @@ spec:
     metadata:
       labels:
         app: {{ .Values.newsfrontend.name }}
+      annotations:
+        {{ if eq .Values.localnews.servicemesh "on" }}
+        sidecar.istio.io/inject: "true"
+        {{ end }}
     spec:
       containers:
+      {{ if eq .Values.localnews.sso.enabled "on" }}
+        - image: quay.io/oauth2-proxy/oauth2-proxy:latest
+          imagePullPolicy: {{ .Values.localnews.imagePullPolicy }}
+          name: oauth2
+          args:
+            - --config=/etc/oauth2-proxy.cfg
+          ports:
+            - containerPort: 4180
+              name: oauth2
+          volumeMounts:
+            - name: oauth-config
+              mountPath: /etc/oauth2-proxy.cfg
+              subPath: oauth2-proxy.cfg
+      {{ end }}
         - image: {{ .Values.newsfrontend.image }}:{{ .Values.newsfrontend.imageTag }}
           imagePullPolicy: {{ .Values.localnews.imagePullPolicy }}
           name: {{ .Values.newsfrontend.name }}
@@ -35,6 +53,12 @@ spec:
             - name: {{ .Values.newsfrontend.envVars.backend.nodePort.key }}
               value: "{{ .Values.newsfrontend.envVars.backend.nodePort.value }}"
             - name: {{ .Values.newsfrontend.envVars.backend.ip.key }}
-              value: {{ .Values.newsbackend.name }}.{{ .Values.localnews.domain }}
+              value: "{{ .Values.newsbackend.name }}-{{ .Release.Namespace }}.apps.{{ .Values.localnews.domain }}"
           {{ end }}
+    {{ if eq .Values.localnews.sso.enabled "on" }}
+      volumes:
+         - name : oauth-config
+           configMap:
+             name: oauth-config
+    {{ end }}
 {{ end }}
