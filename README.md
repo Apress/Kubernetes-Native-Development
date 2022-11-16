@@ -20,3 +20,5 @@ The easiest way is to deploy it with Helm and access the frontend via NodePort.
 
     kubectl create ns localnews
     helm install localnews k8s/helm-chart -n localnews
+    
+To learn more on the different parameters and configuration option in the Helm chart please refer to the [chart docs](https://github.com/sa-mw-dach/local-news-shift/tree/main/k8s/helm-chart).
