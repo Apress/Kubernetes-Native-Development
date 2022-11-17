@@ -6,7 +6,6 @@ metadata:
   namespace: {{ .Release.Namespace }}-{{ .Values.localnews.sso.namespacepostfix }}
   labels:
     app: sso
-  namespace: bschmeli-localnews-sso
 spec:
   user:
     username: test
