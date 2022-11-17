@@ -79,7 +79,7 @@ newsbackend:
   envVars:
     backendNlpUrl:
       # -- The key of the environment variable used to set the url to the location extractor.
-      key: backend.nlp.urli
+      key: backend.nlp.url
       # -- Protocol and host name for the location extractor. This should point to the service name.
       valueHost: "http://location-extractor"
       # -- The path used to analyze the text
