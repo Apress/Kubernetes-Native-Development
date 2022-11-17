@@ -3,8 +3,6 @@ apiVersion: maistra.io/v1
 kind: ServiceMeshMember
 metadata:
   name: default
-  annotations:
-    "helm.sh/hook": pre-install
 spec:
   controlPlaneRef:
     name: {{ .Values.localnews.mesh.controlplane.name }}
