@@ -10,7 +10,7 @@ This tutorial describes how to deploy the local news application to OpenShift. T
     
 ## Deploy the Local News application via Helm 
     OCP_DOMAIN=$(oc whoami --show-server=true | sed -E 's/https:\/\/api\.|:6443//g')
-    helm upgrade -i localnews k8s/helm-chart -f k8s/helm-chart/values-openshift.yaml \ 
+    helm upgrade -i localnews k8s/helm-chart -f k8s/helm-chart/values-openshift.yaml \
     --set localnews.domain=$OCP_DOMAIN
     
 ## Verify the deployment
