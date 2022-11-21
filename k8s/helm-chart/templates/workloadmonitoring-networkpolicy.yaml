@@ -1,4 +1,4 @@
-{{ if eq .Values.localnews.workloadmonitoring "on" }}
+{{ if and (eq .Values.localnews.workloadmonitoring "on") (eq .Values.localnews.servicemesh "on")}}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
