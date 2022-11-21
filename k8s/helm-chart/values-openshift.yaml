@@ -34,6 +34,8 @@ localnews:
       secret: "ZHNnc0RHJT9zZGc/c0VUCg==" 
   # -- Enables user workload monitoring by creating a service monitor for news-backend and location-extractor.
   workloadmonitoring: "off"
+   # -- Enables Network Policies to restrict traffic flows to the minimum.
+  networkpolicysecurity: "on"
 feedscraper:
   # -- Whether the feedscraper should be deployed.
   deployment: "on"

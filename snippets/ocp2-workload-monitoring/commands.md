@@ -13,7 +13,7 @@ Furthermore, make sure that you have enabled User Workload Monitoring in your ta
 ## Enable Workload Monitoring for Local News
 You can enable workload monitoring by setting the respective flag implemented as Helm parameter.  
   
-    helm upgrade -i localnews k8s/helm-chart -f k8s/helm-chart/values-openshift.yaml \ 
+    helm upgrade -i localnews k8s/helm-chart -f k8s/helm-chart/values-openshift.yaml \
     --set localnews.domain=$OCP_DOMAIN \
     --set localnews.workloadmonitoring="on"
 
