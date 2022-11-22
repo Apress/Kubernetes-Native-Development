@@ -33,7 +33,9 @@ We provide several tutorials for OpenShift features that can be demonstrated wit
 [Deploy RHSSO and secure the frontend with an OAuth proxy](snippets/ocp3-sso/commands.md) to limit access to the application.
 ### Tutorial 4: Enable OpenShift ServiceMesh
 [Deploy the application into the OpenShift service mesh](snippets/ocp4-mesh-basic/commands.md) and demonstrate additional observability and security.
-### Tutorial 5: Dark launches with ServiceMesh
+### Tutorial 5: NetworkPolicies
+[Deploy the application with NetowrkPolicies in place](snippets/ocp5-networkpolicy-basic/commands.md) to restrict unnecessary communication paths between components.
+### Tutorial 6: Dark launches with ServiceMesh
 TODO
-### Tutorial 6: Advanced routing with Seldon
+### Tutorial 7: Advanced routing with Seldon
 TODO
