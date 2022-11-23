@@ -1,0 +1,143 @@
+{{ if eq .Values.localnews.networkpolicysecurity "on" }}
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-all-ingress-and-egress
+spec:
+  podSelector: {}
+  egress: []
+  ingress: []
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: newsfrontend-ingress-requirements
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          network.openshift.io/policy-group: ingress
+  podSelector:
+    matchLabels:
+      app: {{ .Values.newsfrontend.name }}
+  policyTypes:
+  - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: news-backend-ingress-requirements
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.newsbackend.name }}
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: {{ .Values.feedscraper.name }}
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            network.openshift.io/policy-group: ingress
+  policyTypes:
+  - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: news-backend-egress-requirements
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.newsbackend.name }}
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.postgis.name }}
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.locationextractor.name }}
+  - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: openshift-dns
+  policyTypes:
+  - Egress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: postgis-ingress-requirements
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.postgis.name }}
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.newsbackend.name }}
+  policyTypes:
+  - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: location-extractor-ingress-requirements
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.locationextractor.name }}
+  ingress:
+  - from: 
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.newsbackend.name }}
+  policyTypes:
+  - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: location-extractor-egress-requirements
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.locationextractor.name }}
+  egress:
+  - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+  policyTypes:
+  - Egress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: feed-scraper-egress-requirements
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.feedscraper.name }}
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.newsbackend.name }}
+  - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: openshift-dns
+  - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+  policyTypes:
+  - Egress
+{{ end }}
