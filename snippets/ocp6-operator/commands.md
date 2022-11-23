@@ -24,4 +24,4 @@ Run the operator locally with the make command and create a new local news CR.
       
     make install run
     # In another terminal tab from the git root folder
-    oc apply -f snippets/ocpx-operator/localnews.yaml 
+    oc apply -f snippets/ocp6-operator/localnews.yaml 
