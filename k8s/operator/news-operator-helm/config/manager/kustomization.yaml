@@ -13,4 +13,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/k8snativedev/news-operator
-  newTag: 0.0.1
+  newTag: 0.0.1-openshift
