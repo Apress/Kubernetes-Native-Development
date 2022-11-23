@@ -1,3 +1,4 @@
+{{ if eq .Values.localnews.workloadmonitoring "on" }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -10,4 +11,5 @@ spec:
       expr: application_duplicateFeeds > 50
       annotations:
         summary: Too many duplicates detected
+{{ end }}
           
