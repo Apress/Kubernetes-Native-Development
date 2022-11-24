@@ -77,26 +77,50 @@ metadata:
                 },
                 "feeds": {
                   "key": "SCRAPER_FEEDS_URL",
-                  "value": "http://feeds.bbci.co.uk/news/world/rss.xml"
+                  "value": "http://feeds.bbci.co.uk/news/world/rss.xml, https://www.aljazeera.com/xml/rss/all.xml, https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml, http://rss.cnn.com/rss/edition_world.rss, https://timesofindia.indiatimes.com/rssfeeds/296589292.cms, https://www.cnbc.com/id/100727362/device/rss/rss.html"
                 }
               },
               "image": "quay.io/k8snativedev/feed-scraper",
-              "imageTag": "latest",
+              "imageTag": "openshift",
               "name": "feed-scraper",
               "replicaCount": 1
             },
             "localnews": {
-              "domain": "nip.io",
+              "domain": "your-cluster.domain",
               "imagePullPolicy": "Always",
-              "minikubeIp": "fill-in-minikube-ip"
+              "mesh": {
+                "controlplane": {
+                  "name": "basic",
+                  "namespace": "istio-system"
+                },
+                "dataplane": {
+                  "mtls": {
+                    "strict": "off"
+                  }
+                },
+                "locationExtractorSecondVersion": {
+                  "name": "off",
+                  "type": "50/50"
+                }
+              },
+              "networkpolicysecurity": "off",
+              "servicemesh": "off",
+              "sso": {
+                "client": {
+                  "secret": "ZHNnc0RHJT9zZGc/c0VUCg=="
+                },
+                "enabled": "off",
+                "namespacepostfix": "sso"
+              },
+              "workloadmonitoring": "off"
             },
             "locationextractor": {
               "deployment": "on",
               "image": "quay.io/k8snativedev/location_extractor",
-              "imageTag": "latest",
+              "imageTag": "openshift",
               "name": "location-extractor",
               "ports": {
-                "containerPort": 80,
+                "containerPort": 5000,
                 "servicePort": 8081
               },
               "replicaCount": 1,
@@ -116,7 +140,7 @@ metadata:
                 }
               },
               "image": "quay.io/k8snativedev/news-backend",
-              "imageTag": "latest",
+              "imageTag": "openshift",
               "name": "news-backend",
               "ports": {
                 "containerPort": 8080,
@@ -127,7 +151,7 @@ metadata:
               "service": "on"
             },
             "newsfrontend": {
-              "backendConnection": "viaNodePort",
+              "backendConnection": "viaIngress",
               "deployment": "on",
               "envVars": {
                 "backend": {
@@ -137,15 +161,19 @@ metadata:
                   },
                   "nodePort": {
                     "key": "NODE_PORT",
-                    "value": null
+                    "value": 80
+                  },
+                  "prefix": {
+                    "key": "PREFIX",
+                    "value": "http://"
                   }
                 }
               },
               "image": "quay.io/k8snativedev/news-frontend",
-              "imageTag": "latest",
+              "imageTag": "openshift",
               "name": "news-frontend",
               "ports": {
-                "containerPort": 80,
+                "containerPort": 8080,
                 "nodePort": 31111,
                 "servicePort": 80
               },
@@ -183,7 +211,7 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    operators.operatorframework.io/builder: operator-sdk-v1.15.0
+    operators.operatorframework.io/builder: operator-sdk-v1.24.0
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
   name: news-operator-helm.v0.0.1
   namespace: placeholder
@@ -297,7 +325,9 @@ spec:
           - create
         serviceAccountName: news-operator-helm-controller-manager
       deployments:
-      - name: news-operator-helm-controller-manager
+      - label:
+          control-plane: controller-manager
+        name: news-operator-helm-controller-manager
         spec:
           replicas: 1
           selector:
@@ -327,7 +357,7 @@ spec:
                 - --metrics-bind-address=127.0.0.1:8080
                 - --leader-elect
                 - --leader-election-id=news-operator-helm
-                image: quay.io/k8snativedev/news-operator:0.0.1
+                image: quay.io/k8snativedev/news-operator:0.0.1-openshift
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -344,7 +374,7 @@ spec:
                 resources:
                   limits:
                     cpu: 200m
-                    memory: 100Mi
+                    memory: 512Mi
                   requests:
                     cpu: 100m
                     memory: 60Mi
