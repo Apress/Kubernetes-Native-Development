@@ -7,7 +7,7 @@ metadata:
   name: localnews-operators
   namespace: openshift-marketplace
 spec:
-  displayName: Localnews Operator Catalog
+  displayName: Ben&Max providing you an Operator
   grpcPodConfig:
     nodeSelector:
       kubernetes.io/os: linux
@@ -31,7 +31,7 @@ spec:
   spec:
   sourceType: grpc
   image: quay.io/k8snativedev/news-operator-catalog:0.0.1-openshift
-  publisher: apress.com
+  publisher: https://github.com/Apress/Kubernetes-Native-Development
   updateStrategy:
     registryPoll:
       interval: 30m
