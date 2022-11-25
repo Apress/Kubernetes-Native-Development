@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: curl
+  name: curl-to-pod-ip
   labels:
     app: curl
 spec:
@@ -10,6 +10,6 @@ spec:
       containers:
       - image: curlimages/curl
         command: [ "/bin/sh", "-c", "--" ]
-        args: [ "curl -s -f --connect-timeout 5 http://10.129.2.173:8080"]
+        args: [ "curl -s -f --connect-timeout 5 http://10.128.1.1:8080"]
         name: curl
       restartPolicy: Never
