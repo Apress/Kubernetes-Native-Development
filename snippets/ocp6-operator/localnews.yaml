@@ -4,4 +4,4 @@ metadata:
   name: mynewsapp
 spec: 
   localnews:
-    domain: ocp5.stormshift.coe.muc.redhat.com
+    domain: your-cluster.domain
