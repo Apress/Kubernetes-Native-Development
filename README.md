@@ -20,3 +20,22 @@ The easiest way is to deploy it with Helm and access the frontend via NodePort.
 
     kubectl create ns localnews
     helm install localnews k8s/helm-chart -n localnews
+    
+To learn more on the different parameters and configuration option in the Helm chart please refer to the [chart docs](https://github.com/sa-mw-dach/local-news-shift/tree/main/k8s/helm-chart).
+
+## OpenShift Tutorials
+We provide several tutorials for OpenShift features that can be demonstrated with the Local News application. You can find them in the snippets folder.
+### Tutorial 1: Deploy via Helm
+[Deploy the Helm chart](snippets/ocp1-helm-deploy/commands.md) in OpenShift via command line or via web console (TODO). 
+### Tutorial 2: Application metrics and alerts with user workload monitoring
+[Enable user workload monitoring](snippets/ocp2-workload-monitoring/commands.md) for the local news application.
+### Tutorial 3: Secure the frontend with OpenID Connect via RHSSO
+[Deploy RHSSO and secure the frontend with an OAuth proxy](snippets/ocp3-sso/commands.md) to limit access to the application.
+### Tutorial 4: Enable OpenShift ServiceMesh
+[Deploy the application into the OpenShift service mesh](snippets/ocp4-mesh-basic/commands.md) and demonstrate additional observability and security.
+### Tutorial 5: NetworkPolicies
+[Deploy the application with NetowrkPolicies in place](snippets/ocp5-networkpolicy-basic/commands.md) to restrict unnecessary communication paths between components.
+### Tutorial 6: Dark launches with ServiceMesh
+TODO
+### Tutorial 7: Advanced routing with Seldon
+TODO

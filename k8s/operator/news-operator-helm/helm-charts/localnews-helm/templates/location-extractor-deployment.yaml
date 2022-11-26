@@ -4,16 +4,23 @@ kind: Deployment
 metadata:
   labels:
     app: {{ .Values.locationextractor.name }}
+    version: v1
   name: {{ .Values.locationextractor.name }}
 spec:
   replicas: {{ .Values.locationextractor.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Values.locationextractor.name }}
+      version: v1
   template:
     metadata:
       labels:
         app: {{ .Values.locationextractor.name }}
+        version: v1
+      annotations:
+        {{ if eq .Values.localnews.servicemesh "on" }}
+        sidecar.istio.io/inject: "true"
+        {{ end }}
     spec:
       containers:
         - image: {{ .Values.locationextractor.image }}:{{ .Values.locationextractor.imageTag }}
@@ -21,4 +28,44 @@ spec:
           imagePullPolicy: {{ .Values.localnews.imagePullPolicy }}
           ports:
             - containerPort: {{ .Values.locationextractor.ports.containerPort }}
+          env:
+          - name: LOC_EXT_VERSION
+            value: "v1"
+
+{{ if ne .Values.localnews.mesh.locationExtractorSecondVersion.name "off" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.locationextractor.name }}
+    version: {{ .Values.localnews.mesh.locationExtractorSecondVersion.name }}
+  name: {{ .Values.locationextractor.name }}-{{ .Values.localnews.mesh.locationExtractorSecondVersion.name }}
+spec:
+  replicas: {{ .Values.locationextractor.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.locationextractor.name }}
+      version: {{ .Values.localnews.mesh.locationExtractorSecondVersion.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.locationextractor.name }}
+        version: {{ .Values.localnews.mesh.locationExtractorSecondVersion.name }}
+      annotations:
+        {{ if eq .Values.localnews.servicemesh "on" }}
+        sidecar.istio.io/inject: "true"
+        {{ end }}
+    spec:
+      containers:
+        - image: {{ .Values.locationextractor.image }}:{{ .Values.locationextractor.imageTag }}
+          name: {{ .Values.locationextractor.name }}
+          imagePullPolicy: {{ .Values.localnews.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.locationextractor.ports.containerPort }}
+          env:
+          - name: LOC_EXT_VERSION
+            value: {{ .Values.localnews.mesh.locationExtractorSecondVersion.name }}
+{{ end }}
+
 {{ end }}
