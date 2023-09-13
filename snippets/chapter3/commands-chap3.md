@@ -98,7 +98,9 @@
 
 ##### Listing 3-15. Helm Chart Installation
     kubectl create namespace location-extractor-dev
-    helm install location-extractor-dev k8s/helm-chart -n location-extractor-dev
+    OCP_DOMAIN=$(oc whoami --show-server=true | sed -E 's/https:\/\/api\.|:6443//g')
+    helm upgrade -i localnews k8s/helm-chart -f k8s/helm-chart/values-openshift.yaml -n location-extractor-dev \
+    --set localnews.domain=$OCP_DOMAIN
     kubectl get pods -n location-extractor-dev
     minikube service news-frontend -n location-extractor-dev
 
