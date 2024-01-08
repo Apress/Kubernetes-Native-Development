@@ -1,0 +1,387 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "feedscraper": {
+            "type": "object",
+            "properties": {
+                "deployment": {
+                    "type": "string"
+                },
+                "envVars": {
+                    "type": "object",
+                    "properties": {
+                        "backend": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "feeds": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string"
+                },
+                "imageTag": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "replicaCount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "localnews": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "imagePullPolicy": {
+                    "type": "string"
+                },
+                "mesh": {
+                    "type": "object",
+                    "properties": {
+                        "controlplane": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "namespace": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "dataplane": {
+                            "type": "object",
+                            "properties": {
+                                "mtls": {
+                                    "type": "object",
+                                    "properties": {
+                                        "strict": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "locationExtractorSecondVersion": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "servicemesh": {
+                    "type": "string"
+                },
+                "sso": {
+                    "type": "object",
+                    "properties": {
+                        "client": {
+                            "type": "object",
+                            "properties": {
+                                "secret": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "enabled": {
+                            "type": "string"
+                        },
+                        "namespacepostfix": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "workloadmonitoring": {
+                    "type": "string"
+                }
+            }
+        },
+        "locationextractor": {
+            "type": "object",
+            "properties": {
+                "deployment": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "imageTag": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ports": {
+                    "type": "object",
+                    "properties": {
+                        "containerPort": {
+                            "type": "integer"
+                        },
+                        "servicePort": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "replicaCount": {
+                    "type": "integer"
+                },
+                "service": {
+                    "type": "string"
+                }
+            }
+        },
+        "newsbackend": {
+            "type": "object",
+            "properties": {
+                "deployment": {
+                    "type": "string"
+                },
+                "envVars": {
+                    "type": "object",
+                    "properties": {
+                        "backendNlpUrl": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "valueEndpoint": {
+                                    "type": "string"
+                                },
+                                "valueHost": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "jdbcUrl": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string"
+                },
+                "imageTag": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ports": {
+                    "type": "object",
+                    "properties": {
+                        "containerPort": {
+                            "type": "integer"
+                        },
+                        "nodePort": {
+                            "type": "integer"
+                        },
+                        "servicePort": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "replicaCount": {
+                    "type": "integer"
+                },
+                "service": {
+                    "type": "string"
+                }
+            }
+        },
+        "newsfrontend": {
+            "type": "object",
+            "properties": {
+                "backendConnection": {
+                    "type": "string"
+                },
+                "deployment": {
+                    "type": "string"
+                },
+                "envVars": {
+                    "type": "object",
+                    "properties": {
+                        "backend": {
+                            "type": "object",
+                            "properties": {
+                                "ip": {
+                                    "type": "object",
+                                    "properties": {
+                                        "key": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "null"
+                                        }
+                                    }
+                                },
+                                "nodePort": {
+                                    "type": "object",
+                                    "properties": {
+                                        "key": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "prefix": {
+                                    "type": "object",
+                                    "properties": {
+                                        "key": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string"
+                },
+                "imageTag": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ports": {
+                    "type": "object",
+                    "properties": {
+                        "containerPort": {
+                            "type": "integer"
+                        },
+                        "nodePort": {
+                            "type": "integer"
+                        },
+                        "servicePort": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "replicaCount": {
+                    "type": "integer"
+                },
+                "service": {
+                    "type": "string"
+                }
+            }
+        },
+        "postgis": {
+            "type": "object",
+            "properties": {
+                "envVars": {
+                    "type": "object",
+                    "properties": {
+                        "PGDATA": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "POSTGRES_DB": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "POSTGRES_PASSWORD": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "POSTGRES_USER": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ports": {
+                    "type": "object",
+                    "properties": {
+                        "containerPort": {
+                            "type": "integer"
+                        },
+                        "servicePort": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "replicaCount": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

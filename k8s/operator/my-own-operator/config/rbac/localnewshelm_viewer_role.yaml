@@ -1,0 +1,27 @@
+# permissions for end users to view localnewshelms.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: localnewshelm-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: my-own-operator
+    app.kubernetes.io/part-of: my-own-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: localnewshelm-viewer-role
+rules:
+- apiGroups:
+  - charts.my.domain
+  resources:
+  - localnewshelms
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - charts.my.domain
+  resources:
+  - localnewshelms/status
+  verbs:
+  - get

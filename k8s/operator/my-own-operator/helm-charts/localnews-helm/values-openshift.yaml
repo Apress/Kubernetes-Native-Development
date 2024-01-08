@@ -1,0 +1,175 @@
+# Default values for helm-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+localnews:
+  # -- The general image pull policy for all components
+  imagePullPolicy: Always
+  # -- Must be replaced with the apps domain of your ocp cluster, e.g. 'apps.ocp4.example.com'
+  domain: your-cluster.domain 
+  # -- Enables service mesh for all components except the database
+  servicemesh: "off"
+  mesh:
+    controlplane:
+      # -- The name of the service mesh controlplane CR 
+      name: "basic"
+      # -- The namespace of the service mesh controlplane
+      namespace: "istio-system"
+    dataplane:
+      mtls:
+        # -- Switch from permissive to strict mode by setting this to 'on' 
+        strict: "off"    
+    locationExtractorSecondVersion:
+      # -- The name of a second version of the location extractor component, e.g. 'v2-worse-performance'. Second version will deployed when name != 'off'.
+      name: "off" 
+      # -- Set the routing policy. Supported values are '50/50' and 'mirror'.
+      type: "50/50" # Option: 50/50, mirror
+  sso:
+    # -- Enables single sign on deployment in another namespace. The instance will be preconfigured with an OIDC client for the localnews app. Requires the RHSSO operator to be deployed in this namespace.
+    enabled: "off"
+    # -- The postfix for the namespace where RHSSO will be installed 
+    namespacepostfix: "sso" 
+    client:
+      # -- The client secret for the OIDC client
+      secret: "ZHNnc0RHJT9zZGc/c0VUCg==" 
+  # -- Enables user workload monitoring by creating a service monitor for news-backend and location-extractor.
+  workloadmonitoring: "off"
+   # -- Enables Network Policies to restrict traffic flows to the minimum.
+  networkpolicysecurity: "off"
+feedscraper:
+  # -- Whether the feedscraper should be deployed.
+  deployment: "on"
+  # -- The name of the deployment and service.
+  name: feed-scraper
+  # -- The number of replicas. Values >1 will lead to duplicates. 
+  replicaCount: 1
+  # -- Image used for the feedscraper pod.
+  image: quay.io/k8snativedev/feed-scraper
+  # -- Image tag appended to the image
+  imageTag: openshift
+  envVars:
+    feeds:
+      # -- The key for the environment variable to be set. This is used to configure the feeds url.
+      key: SCRAPER_FEEDS_URL
+      # -- The value for the environment variable. This is used to set a comma-separated list of urls to be scraped. 
+      value: http://feeds.bbci.co.uk/news/world/rss.xml, https://www.aljazeera.com/xml/rss/all.xml, https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml, http://rss.cnn.com/rss/edition_world.rss, https://timesofindia.indiatimes.com/rssfeeds/296589292.cms, https://www.cnbc.com/id/100727362/device/rss/rss.html 
+    backend:
+      # -- The key for another environment variable. This is used to set the backend host. Must point to the service name of the backend.
+      key: SCRAPER_FEED_BACKEND_HOST
+      # -- The value pointing to the service.
+      value: news-backend
+newsbackend:
+  # -- Whether the news backend should be deployed.
+  deployment: "on"
+  # -- Whether the Kubernetes service should be deployed.
+  service: "on"
+  # -- Name of the Kubernetes service.
+  name: news-backend
+  # -- The number of replicas.
+  replicaCount: 1
+  # -- The image for the backend.
+  image: quay.io/k8snativedev/news-backend
+  # -- The image tag for the backend.
+  imageTag: openshift
+  ports:
+    # -- The port of the container 
+    containerPort: 8080
+    # -- Port of the service
+    servicePort: 8080
+    # -- Node port used to access the backend from the browser. This is required when localnews is deployed without ingress.
+    nodePort: 30000
+  envVars:
+    backendNlpUrl:
+      # -- The key of the environment variable used to set the url to the location extractor.
+      key: backend.nlp.url
+      # -- Protocol and host name for the location extractor. This should point to the service name.
+      valueHost: "http://location-extractor"
+      # -- The path used to analyze the text
+      valueEndpoint: /get_loc
+    jdbcUrl:
+       # -- The key of the environment variable used to set the url to the database.
+      key: quarkus.datasource.jdbc.url
+      value: jdbc:postgresql://postgis:5400/news?user=postgres&password=banane
+postgis:
+  # -- Name of the postgres deployment
+  name: postgis
+  # -- Number of replicas. This should not be set >1 because the database cannot be scaled.
+  replicaCount: 1
+  # -- The image used for postgres with the postgis extension.
+  image: postgis/postgis:12-master
+  ports:
+    # -- Port of the database container.
+    containerPort: 5432
+    # -- Port of the service
+    servicePort: 5400
+  envVars:
+    PGDATA:
+      # -- Where to store the data for postgres.
+      key: PGDATA
+      # -- The path where the postgres data is stored. Points to tmp since we use ephemeral storage by default.
+      value: /tmp/pgdata
+    POSTGRES_DB:
+      # -- The name of the database.
+      key: POSTGRES_DB
+      # -- The name of the database.
+      value: news
+    POSTGRES_PASSWORD:
+      # -- The database password.
+      key: POSTGRES_PASSWORD
+      # -- Set your own password.
+      value: banane
+    POSTGRES_USER:
+      # -- The database user.
+      key: POSTGRES_USER
+      # -- The database user.
+      value: postgres
+locationextractor:
+  # -- Enable the deployment of the location extractor.
+  deployment: "on"
+  # -- Enable the service for the location extractor.
+  service: "on"
+  name: location-extractor
+  # -- The number of replicas used for the location extractor.
+  replicaCount: 1
+  # -- The image to be used for the location extractor.
+  image: quay.io/k8snativedev/location_extractor
+  # -- The image tag.
+  imageTag: openshift
+  ports:
+    # -- Container port.
+    containerPort: 5000
+    # -- Service port.
+    servicePort: 8081
+newsfrontend:
+  # -- Enable or disable the deployment of the frontend.
+  deployment: "on"
+  # -- Enable or disable the service.
+  service: "on"
+  # -- The name of the service and deployment 
+  name: news-frontend
+  # -- Number of replias
+  replicaCount: 1
+  # -- Image used for the frontend.
+  image: quay.io/k8snativedev/news-frontend
+  # -- Image tag.
+  imageTag: openshift
+  ports:
+    containerPort: 8080
+    servicePort: 80
+    nodePort: 31111
+  # -- How to access the backend. 'viaIngress' or 'viaNodePort'.
+  backendConnection: "viaIngress"
+  envVars:
+    backend:
+      prefix:
+        key: PREFIX
+        # -- The protocol to be used. You can switch between http and https.
+        value: "http://"
+      ip:
+        key: NODE_IP
+        # -- with 'viaNodePort' no value needs to be set because ip is retrieved from kubernetes api
+        value:
+      nodePort:
+        key: NODE_PORT
+        # -- with 'viaNodePort' no value needs to be set because nodePort is specified in the news-backend Service
+        value: 80 

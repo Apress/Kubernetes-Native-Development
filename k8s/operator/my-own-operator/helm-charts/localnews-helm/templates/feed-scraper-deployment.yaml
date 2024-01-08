@@ -1,0 +1,32 @@
+{{ if eq .Values.feedscraper.deployment "on" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.feedscraper.name }}
+spec:
+  replicas: {{ .Values.feedscraper.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.feedscraper.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.feedscraper.name }}
+      annotations:
+        {{ if eq .Values.localnews.servicemesh "on" }}
+        sidecar.istio.io/inject: "true"
+        {{ end }}
+    spec:
+      containers:
+        - command:
+            - java
+            - -jar
+            - /usr/local/lib/feed-scraper.jar
+          image: {{ .Values.feedscraper.image }}:{{ .Values.feedscraper.imageTag }}
+          name: {{ .Values.feedscraper.name }}
+          env:
+            - name: {{ .Values.feedscraper.envVars.feeds.key }}
+              value: {{ .Values.feedscraper.envVars.feeds.value }}
+            - name: {{ .Values.feedscraper.envVars.backend.key }}
+              value: {{ .Values.feedscraper.envVars.backend.value }}
+{{ end }}

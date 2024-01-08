@@ -1,0 +1,16 @@
+{{ if eq .Values.locationextractor.service "on" }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.locationextractor.name }}
+  name: {{ .Values.locationextractor.name }}
+spec:
+  ports:
+    - port: {{ .Values.locationextractor.ports.servicePort }}
+      targetPort: {{ .Values.locationextractor.ports.containerPort }}
+      name: http
+  selector:
+    app: {{ .Values.locationextractor.name }}
+{{ end }}
+

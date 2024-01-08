@@ -5,10 +5,10 @@ metadata:
 spec:
   source:
     path: k8s/helm-chart
-    repoURL: git@github.com:Apress/Kubernetes-Native-Development.git
+    repoURL: https://github.com/Apress/Kubernetes-Native-Development.git
     targetRevision: openshift
   destination:
-    namespace: newsbackend-integration-gitops
+    namespace: localnews
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:

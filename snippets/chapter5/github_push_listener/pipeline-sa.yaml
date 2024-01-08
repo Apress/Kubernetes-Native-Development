@@ -5,7 +5,7 @@ metadata:
   name: eventlistener-role
 rules:
 - apiGroups: ["triggers.tekton.dev"]
-  resources: ["eventlisteners", "clusterinterceptors", "triggerbindings", "triggertemplates", "taskruns", "pipelineruns"]
+  resources: ["interceptors","eventlisteners", "clusterinterceptors", "triggerbindings", "triggertemplates", "taskruns", "pipelineruns"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "apply"]
 - apiGroups: ["tekton.dev"]
   resources: ["taskruns", "pipelineruns"]
@@ -21,7 +21,7 @@ subjects:
   namespace: localnews-pipelines
 roleRef:
   kind: ClusterRole
-  name: eventlistener-role
+  name: eventlistener-role — ˛÷÷÷
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1

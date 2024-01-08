@@ -1,0 +1,22 @@
+{{ if eq .Values.newsfrontend.backendConnection "viaIngress" }}
+{{ if eq .Values.localnews.servicemesh "off" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.newsfrontend.name }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: {{ .Values.newsfrontend.name }}-{{ .Release.Namespace }}.apps.{{ .Values.localnews.domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.newsfrontend.name }}
+                port:
+                  number: {{ .Values.newsfrontend.ports.servicePort }}
+{{ end }}
+{{ end }}

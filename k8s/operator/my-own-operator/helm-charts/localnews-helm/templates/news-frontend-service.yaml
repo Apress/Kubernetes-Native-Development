@@ -1,0 +1,26 @@
+{{ if eq .Values.newsfrontend.service "on" }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.newsfrontend.name }}
+  name: {{ .Values.newsfrontend.name }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.newsfrontend.ports.servicePort }}
+      {{ if eq .Values.localnews.sso.enabled "on" }}
+      targetPort: 4180
+      {{ else }}
+      targetPort: {{ .Values.newsfrontend.ports.containerPort }}
+      {{ end }}
+      {{ if eq .Values.newsfrontend.backendConnection "viaNodePort" }}
+      nodePort: {{ .Values.newsfrontend.ports.nodePort }}
+      {{ end }}
+  selector:
+    app: {{ .Values.newsfrontend.name }}
+  {{ if eq .Values.newsfrontend.backendConnection "viaNodePort" }}
+  type: NodePort
+  {{ end }}
+{{ end }}
+

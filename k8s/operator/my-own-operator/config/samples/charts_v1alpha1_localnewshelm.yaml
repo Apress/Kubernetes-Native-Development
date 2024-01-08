@@ -1,0 +1,94 @@
+apiVersion: charts.my.domain/v1alpha1
+kind: LocalnewsHelm
+metadata:
+  name: localnewshelm-sample
+spec:
+  # Default values copied from <project_dir>/helm-charts/localnews-helm/values.yaml
+  feedscraper:
+    deployment: "on"
+    envVars:
+      backend:
+        key: SCRAPER_FEED_BACKEND_HOST
+        value: news-backend
+      feeds:
+        key: SCRAPER_FEEDS_URL
+        value: http://feeds.bbci.co.uk/news/world/rss.xml
+    image: quay.io/k8snativedev/feed-scraper
+    imageTag: latest
+    name: feed-scraper
+    replicaCount: 1
+  localnews:
+    domain: nip.io
+    imagePullPolicy: Always
+    minikubeIp: fill-in-minikube-ip
+  locationextractor:
+    deployment: "on"
+    image: quay.io/k8snativedev/location_extractor
+    imageTag: latest
+    name: location-extractor
+    ports:
+      containerPort: 80
+      servicePort: 8081
+    replicaCount: 1
+    service: "on"
+  newsbackend:
+    deployment: "on"
+    envVars:
+      backendNlpUrl:
+        key: backend.nlp.url
+        valueEndpoint: /get_loc
+        valueHost: http://location-extractor
+      jdbcUrl:
+        key: quarkus.datasource.jdbc.url
+        value: jdbc:postgresql://postgis:5400/news?user=postgres&password=banane
+    image: quay.io/k8snativedev/news-backend
+    imageTag: latest
+    name: news-backend
+    ports:
+      containerPort: 8080
+      nodePort: 30000
+      servicePort: 8080
+    replicaCount: 1
+    service: "on"
+  newsfrontend:
+    backendConnection: viaNodePort
+    deployment: "on"
+    envVars:
+      backend:
+        ip:
+          key: NODE_IP
+          value: null
+        nodePort:
+          key: NODE_PORT
+          value: null
+    image: quay.io/k8snativedev/news-frontend
+    imageTag: latest
+    name: news-frontend
+    ports:
+      containerPort: 80
+      nodePort: 31111
+      servicePort: 80
+    replicaCount: 1
+    service: "on"
+  postgis:
+    envVars:
+      PGDATA:
+        key: PGDATA
+        value: /tmp/pgdata
+      POSTGRES_DB:
+        key: POSTGRES_DB
+        value: news
+      POSTGRES_PASSWORD:
+        key: POSTGRES_PASSWORD
+        value: banane
+      POSTGRES_USER:
+        key: POSTGRES_USER
+        value: postgres
+    image: postgis/postgis:12-master
+    name: postgis
+    ports:
+      containerPort: 5432
+      servicePort: 5400
+    replicaCount: 1
+  
+  
